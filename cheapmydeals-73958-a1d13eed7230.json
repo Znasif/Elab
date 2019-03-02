@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cheapmydeals-73958",
+  "private_key_id": "a1d13eed7230e2daf66ebd4da8a1fbdad385fdab",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDIhMeUTx9i60re\nEULdGgjWAMkuqOCBqdA6pwWTC9p+oL5gz2Vmi180aEWPiFxT8WPBfqoFQ6iQmnrD\n81lnVE9eqrccbO6adVd9tbJ4Mu9yJmXVbOWGsrc/xr032xXaUTYPJUF1OHlqfQGV\nhxba2UyBiHJy7cMzgh6dFTHQFOM8VWINLEKooOjnhhXDNamkQw0A9ClWRWRfxO7L\nsN8WQ18x//Ko5WY6HFm4s/xhZiwfDPaojrtYtxW1nv4QOIW1Q8xWRGniFDUlwzRx\nIJ2fTwR9BHXjL3W47p3ng0FDUjnn6O9p07c493SmvvPo3RVTKYF2fKz9vbeubA4m\nSGhw5ocRAgMBAAECggEABI6sAI1pz7Q8T97Bj8fjMoXzDJnu/FNxNZwNLuHileUu\nXoHoMpPxVn4WMqRtQMUoOMIZuCPpBVxVdPWnbwdGBIdJwR4isCUBl4xVIZE6yvPf\ndaHTd6PBMXRhYY8bqIoW+fIlUjY14Ds2GYFn/hJZQEprG3yW5qlK69QK/Uk0Pu9B\njRySX43wXdn8pLCEoOxmrDLRt+dpqCX9btrtGYXN529+c6Y8bHtjLnSOvf+Qtqyn\nDaD32rzQYpBMnQtwjUcr9gdbCyaWy817xqnrb+lYaGTFana15RJgQF2+3TwgCKc5\nGxpYdzUXOKLtvF1w5S4AXqKibqxSWVL6Khl6bIB2KQKBgQDpTHWnoUlrDpMfp2Ud\n1yZ3km/uSReCPgy3Uil0HrghniLzGJdWajp89CLaTb3G0hNjzlxhllj49tPV0eJ/\nTQLUe74/DJ5BpTjbQqjgJVooDsIBRLpY+HFU7muo5TPDNEwLu5EUIcm/xewtLInx\noM9BrNz5ZlWuHMIjO1p14Rm75QKBgQDcB8Kjmbicj+36YATpZPQXhR5pgP810mBg\nlAVn99F2QN4ig7nlwJ5KGqHxQZSCIjPMYV5aJ0/pdpOc4kpoP+lyBL/nM7VhWHJb\n5/euCYFPSNjf00kjUgQ7sopHVZz/5Es060hMB4dZUYtM6lsAL1HRrne67dAvyPMi\n2R3PKPSjvQKBgHkY6RFkFNnvLMsHduMwZJU4e8UyR3OhhbQ6f634rBc3IGkS4KtI\nZKeridPK+rETJmFuImG9St2gMYERewIdFVT6DlxnzlXAz2xwg3wlp1CXqHhEFn5M\nJ3ewck2u+1ld8gM9DydmCnTy5Y7lSY0UrcAnXGRQjDTeVJ85FdGOUG9JAoGBALtF\nz6A3Yi2/QynrN8L+rdKm9q+Nn6pLmMQauE85WgpwQ6DUxRCL1S31ZQhWbPQl8Dhw\nV0IcW6O1zQWmhPYeD69/42YBWMu13//he6mhZXH56rz2tDVfxUKaP59fevVBddFg\nwHQVpFmdUhbxEOsjW1xARp/PcXZ6bpamfPypOy9xAoGBANwgEHZhS7JuFB2HNa3w\n6vlkQ0Tt93NkpyRlkYDgcos7r8Bt1IzM/dAUS3JNW6xJkzG7xQg8rpa3cEqYBlLN\nDcdgzTfp/S7gPhO3etyIbgAVxlezqNuVO82K7cUH7r1TTdeGQN8i4nol8vqpZxbH\nxnNcz+Vght2CwtEVCZkE55QH\n-----END PRIVATE KEY-----\n",
+  "client_email": "cheapmydeals-73958@appspot.gserviceaccount.com",
+  "client_id": "113175490247876417502",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/cheapmydeals-73958%40appspot.gserviceaccount.com"
+}
