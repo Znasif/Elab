@@ -9,6 +9,7 @@ from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
+import h5py
 import pandas as pd
 import numpy as np
 import random as rn
@@ -20,7 +21,6 @@ with open("Data/symptom.json", "r") as f:
 
 patient = {}
 num = 0
-dataset = []
 
 for i in diagnose:
     j, k = diagnose[i]
@@ -33,18 +33,15 @@ for i in diagnose:
         patient[num] = [list(j[c]), i]
         num += 1
 
-with open("patient.json", 'w+') as f:
+with open("Data/patient.json", 'w+') as f:
    json.dump(patient, f)
 
-import json
-import numpy as np
-import h5py
 
-with open("freq.json", "r") as f:
+with open("Data/freq.json", "r") as f:
     a = f.read()
     symptom = json.loads(a)
 
-with open("patient.json", "r") as f:
+with open("Data/patient.json", "r") as f:
     a = f.read()
     patient = json.loads(a)
 
