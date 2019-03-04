@@ -60,6 +60,23 @@ class Data:
         diagnostics_model.save('Data/diagnostics.h5')
         del diagnostics_model
 
+    @staticmethod
+    def prepare_keys():
+        Data.read_symptom_pattern()
+        patient_data = Data.read_patient_data()
+
+        for j, i in enumerate(Data.symptom_pattern):
+            Data.symptom_id_to_name[j] = [j, i]
+            Data.symptom_name_to_id[i] = [j, i]
+
+        disease_num = 0
+
+        for i in patient_data:
+            if(Data.disease_name_to_id.get(patient_data[i][1]) == None):
+                Data.disease_name_to_id[patient_data[i][1]] = disease_num
+                Data.disease_id_to_name[disease_num] = patient_data[i][1]
+                disease_num += 1
+
 
 class Report:
     @staticmethod
@@ -160,8 +177,8 @@ class Train:
         :return:
         """
         for j, i in enumerate(Data.symptom_pattern):
-            Data.symptom_id_to_name[i] = [j, i]
-            Data.symptom_name_to_id[j] = [j, i]
+            Data.symptom_id_to_name[j] = [j, i]
+            Data.symptom_name_to_id[i] = [j, i]
 
         dataset = np.zeros((len(patient_data), len(Data.symptom_pattern)+1))
 
@@ -236,7 +253,9 @@ class Diagnose:
         :param symptom_list:
         :return:
         """
+        Data.prepare_keys()
         model = Data.load_diagnostics()
+
         test_ex = [symptom_list[i] for i in symptom_list.keys()]
 
         test_ = np.zeros((len(test_ex), len(Data.symptom_pattern)))
@@ -255,4 +274,4 @@ class Diagnose:
 
 if __name__ == "__main__":
     symptom_list_ = {"60000":["syncope", "vertigo"]}
-    Diagnose.diagnose(symptom_list_)
+    print(Diagnose.diagnose(symptom_list_))
