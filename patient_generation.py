@@ -2,13 +2,14 @@ import numpy as np
 import random as rn
 import json
 
-with open("new.json", "r") as f:
+# Randomize sampling so that anomalous behaviour of the model can be rectified
+
+with open("Data/new.json", "r") as f:
     a = f.read()
     diag = json.loads(a)
 
 patient = {}
 num = 0
-dataset = []
 
 for i in diag:
     j, k = diag[i]
