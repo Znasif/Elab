@@ -1,9 +1,12 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_oauthlib.provider import OAuth2Provider
+from modules import *
+import json
 
 app = Flask(__name__)
 api = Api(app)
+
 
 class Diagnose(Resource):
   def get(self):
@@ -15,7 +18,9 @@ class Diagnose(Resource):
     need to pass json to modules -> Diagnose -> diagnose
     """
     j_response = request.get_json()
+    j_response = Diagnose.diagnose(j_response)
     return {"Diagnosed Symptom": j_response}
+
 
 class Train(Resource):
   def get(self):
@@ -29,6 +34,7 @@ class Train(Resource):
     j_response = request.get_json()
     return {"you sent": j_response}
 
+
 class Report(Resource):
   def get(self, report_type):
     """
@@ -37,9 +43,10 @@ class Report(Resource):
     """
     return {"message": "no post"}
 
+
 api.add_resource(Diagnose, '/diag/')
 api.add_resource(Train, '/train/')
-api.add_resource(Train, '/data/')
+api.add_resource(Report, '/data/')
 
 if __name__ == "__main__":
   app.run(debug=True)

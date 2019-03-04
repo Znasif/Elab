@@ -15,7 +15,7 @@ import numpy as np
 import random as rn
 import json
 
-with open("Data/symptom.json", "r") as f:
+with open("Data/diseases.json", "r") as f:
     a = f.read()
     diagnose = json.loads(a)
 
