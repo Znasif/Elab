@@ -31,8 +31,7 @@ class Data:
     def read_disease_data():
         with open("Data/diseases.json", "r") as f:
             a = f.read()
-            patient_data = json.loads(a)
-        return patient_data
+            Data.diseases = json.loads(a)
 
     @staticmethod
     def write_disease_data(diseases):
@@ -41,7 +40,7 @@ class Data:
 
     @staticmethod
     def read_symptom_pattern():
-        with open("Data/freq.json", "r") as f:
+        with open("Data/symptom_pattern.json", "r") as f:
             a = f.read()
             Data.symptom_pattern = json.loads(a)
         return Data.symptom_pattern
@@ -62,19 +61,19 @@ class Data:
 
     @staticmethod
     def prepare_keys():
+        Data.read_disease_data()
         Data.read_symptom_pattern()
-        patient_data = Data.read_patient_data()
 
         for j, i in enumerate(Data.symptom_pattern):
-            Data.symptom_id_to_name[j] = [j, i]
-            Data.symptom_name_to_id[i] = [j, i]
+            Data.symptom_id_to_name[j] = i
+            Data.symptom_name_to_id[i] = j
 
         disease_num = 0
 
-        for i in patient_data:
-            if(Data.disease_name_to_id.get(patient_data[i][1]) == None):
-                Data.disease_name_to_id[patient_data[i][1]] = disease_num
-                Data.disease_id_to_name[disease_num] = patient_data[i][1]
+        for i in Data.diseases.keys():
+            if(Data.disease_name_to_id.get(i) == None):
+                Data.disease_name_to_id[i] = disease_num
+                Data.disease_id_to_name[disease_num] = i
                 disease_num += 1
 
 
@@ -86,19 +85,22 @@ class Report:
 
     @staticmethod
     def find_symptom_overlap(symptom_ids_1, symptom_ids_2):
+        symptom_properties = []
         symptom_ids = []
         i, j = 0, 0
         i_, j_ = len(symptom_ids_1), len(symptom_ids_2)
         while(i<i_ and j<j_):
             if(symptom_ids_1[i]==symptom_ids_2[j]):
-                symptom_ids.append([Data.symptom_id_to_name[symptom_ids_1[i]][1], Data.symptom_pattern[Data.symptom_id_to_name[symptom_ids_1[i]][1]]])
+                symptom_name = Data.symptom_id_to_name[symptom_ids_1[i]]
+                symptom_properties.append([symptom_name, Data.symptom_pattern[symptom_name]])
+                symptom_ids.append(symptom_ids_1[i])
                 i += 1
                 j += 1
             elif(symptom_ids_1[i]<symptom_ids_2[j]):
                 i += 1
             elif(symptom_ids_1[i]>symptom_ids_2[j]):
                 j += 1
-        return symptom_ids
+        return symptom_properties, symptom_ids
 
     @staticmethod
     def result(predictions, x_test, y_test=None):
@@ -114,28 +116,48 @@ class Report:
                     mx = i
                     idx = j
             diagnosed_.append(Data.disease_id_to_name[idx])
-            # print("\n***********************", r, "***********************\n")
-            if (y_test != None and idx != y_test[r]):
-                print("Inferred --> ", Data.disease_id_to_name[idx])
+            print("\n***********************", r, "***********************\n")
+            print("Inferred --> ", Data.disease_id_to_name[idx])
+
+            symptoms_list = []
+            given_symptom_ids = []
+            rn = x_test[r].shape[0]
+            for j in range(rn):
+                if (x_test[r][j] == 1):
+                    symptoms_list.append(Data.symptom_id_to_name[j])
+                    given_symptom_ids.append(j)
+            print(symptoms_list)
+            inferred_symptom_ids = Report.sort_symptom_ids(Data.diseases[Data.disease_id_to_name[idx]][0])
+            symptom_properties, aid = Report.find_symptom_overlap(inferred_symptom_ids, given_symptom_ids)
+
+            # The percentage of given symptoms that is also present in Inferred Disease
+            print(round(len(aid) / len(inferred_symptom_ids), 2),end=" ")
+
+            if (y_test is not None and idx != y_test[r]):
                 print("Actual --> ", Data.disease_id_to_name[int(y_test[r])])
-                inferred_symptom_ids = Report.sort_symptom_ids(Data.diseases[Data.disease_id_to_name[idx]][0])
                 actual_symptom_ids = Report.sort_symptom_ids(Data.diseases[Data.disease_id_to_name[int(y_test[r])]][0])
-                symptom_ids = Report.find_symptom_overlap(inferred_symptom_ids, actual_symptom_ids)
-                symptoms_list = []
-                rn = x_test[r].shape[0]
-                for j in range(rn):
-                    if (x_test[r][j] == 1):
-                        symptoms_list.append(Data.symptom_id_to_name[j])
-                print(symptoms_list)
-                print(round(len(symptom_ids) / len(inferred_symptom_ids), 2), round(len(symptom_ids) / len(actual_symptom_ids), 2))
-                print(symptom_ids)
+
+                _, bid = Report.find_symptom_overlap(actual_symptom_ids, given_symptom_ids)
+                cnames, _ = Report.find_symptom_overlap(aid, bid)
+
+                # The percentage of given symptoms that is also present in Actual Disease
+                print(round(len(bid) / len(actual_symptom_ids), 2))
+
+                # The symptoms that are present in both Inferred and Actual Diseases
+                print("Overlapping Symptoms ", cnames)
                 false_cnt += 1
             else:
                 pass
                 # print(disease_id_to_name[idx])
             r += 1
 
-        if (y_test != None):
+            # The percentage of given symptoms that actually contributed to the inference of the disease
+            print("Actual Contribution Factor -> ", round(len(aid) / (len(given_symptom_ids)+ 0.000001), 2))
+
+            # The portion of given symptoms that is also present in Inferred Disease
+            print(symptom_properties)
+
+        if (y_test is not None):
             print("\n********\t", 1 - false_cnt / predictions.shape[0], "\t********")
         return diagnosed_
         
@@ -176,21 +198,13 @@ class Train:
         :param patient_data:
         :return:
         """
-        for j, i in enumerate(Data.symptom_pattern):
-            Data.symptom_id_to_name[j] = [j, i]
-            Data.symptom_name_to_id[i] = [j, i]
+        Data.prepare_keys()
 
         dataset = np.zeros((len(patient_data), len(Data.symptom_pattern)+1))
 
-        disease_num = 0
-
         for i in patient_data:
             for j in patient_data[i][0]:
-                dataset[int(i)][Data.symptom_id_to_name[j][0]] = 1
-            if(Data.disease_name_to_id.get(patient_data[i][1]) == None):
-                Data.disease_name_to_id[patient_data[i][1]] = disease_num
-                Data.disease_id_to_name[disease_num] = patient_data[i][1]
-                disease_num += 1
+                dataset[int(i)][Data.symptom_name_to_id[j]] = 1
             dataset[int(i)][-1] = Data.disease_name_to_id[patient_data[i][1]]
         
         # Shuffle dataset and convert to Dataframe
@@ -231,7 +245,7 @@ class Train:
             model = Data.load_diagnostics()
 
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(x, y_, epochs=20, batch_size=10)
+        model.fit(x, y_, epochs=2, batch_size=10)
 
         scores = model.evaluate(x, y_)
         print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
@@ -242,8 +256,11 @@ class Train:
         x_test = test[:, 0:-1]
         y_test = test[:, -1]
         predictions = model.predict(x_test)
-        Report.result(predictions, x_test, y_test)
+        res = Report.result(predictions, x_test, y_test)
+        for j, id in enumerate(new_patient_ids):
+            new_patient[id][1] = [new_patient[id][1], res[j]]
 
+        return new_patient
 
 class Diagnose:
     @staticmethod
@@ -262,7 +279,7 @@ class Diagnose:
 
         for i in range(len(test_ex)):
             for j in test_ex[i]:
-                test_[i][Data.symptom_name_to_id[j][0]] = 1
+                test_[i][Data.symptom_name_to_id[j]] = 1
             test_[i][-1] = -1
         predictions = model.predict(test_)
         results = Report.result(predictions, test_)
@@ -273,5 +290,5 @@ class Diagnose:
 
 
 if __name__ == "__main__":
-    symptom_list_ = {"60000":["syncope", "vertigo"]}
-    print(Diagnose.diagnose(symptom_list_))
+    symptom_list_ = {'33724': [['syncope', 'vertigo'], 'incontinence'], '33725': [['polyuria', 'polydypsia'], 'diabetes'], '33726': [['tremor', 'intoxication'], 'decubitus ulcer']}
+    print(Train.train(symptom_list_))
