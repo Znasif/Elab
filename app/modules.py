@@ -22,46 +22,46 @@ class Data:
 
     @staticmethod
     def read_patient_data():
-        with open("Data/patient.json", "r") as f:
+        with open("../Data/patient.json", "r") as f:
             a = f.read()
             patient_data = json.loads(a)
         return patient_data
     
     @staticmethod
     def write_patient_data(patient_data):
-        with open("Data/patient.json", 'w+') as f:
+        with open("../Data/patient.json", 'w+') as f:
             json.dump(patient_data, f)
 
     @staticmethod
     def read_disease_data():
-        with open("Data/diseases.json", "r") as f:
+        with open("../Data/diseases.json", "r") as f:
             a = f.read()
             Data.diseases = json.loads(a)
 
     @staticmethod
     def write_disease_data(diseases):
-        with open("Data/diseases.json", 'w+') as f:
+        with open("../Data/diseases.json", 'w+') as f:
             json.dump(diseases, f)
 
     @staticmethod
     def read_symptom_pattern():
-        with open("Data/symptom_pattern.json", "r") as f:
+        with open("../Data/symptom_pattern.json", "r") as f:
             a = f.read()
             Data.symptom_pattern = json.loads(a)
         return Data.symptom_pattern
     
     @staticmethod
     def write_symptom_pattern(symptom_pattern):
-        with open("Data/symptom_pattern.json", 'w+') as f:
+        with open("../Data/symptom_pattern.json", 'w+') as f:
             json.dump(symptom_pattern, f)
 
     @staticmethod
     def load_diagnostics():
-        return load_model('Data/diagnostics.h5')
+        return load_model('../Data/diagnostics.h5')
     
     @staticmethod
     def save_diagnostics(diagnostics_model):
-        diagnostics_model.save('Data/diagnostics.h5')
+        diagnostics_model.save('../Data/diagnostics.h5')
         del diagnostics_model
 
     @staticmethod

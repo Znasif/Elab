@@ -63,4 +63,4 @@ api.add_resource(Train_, '/train/')
 api.add_resource(Report_, '/data/')
 
 if __name__ == "__main__":
-  app.run(host='0.0.0.0', port="8080", threaded=True, debug=False)
+  app.run(host='0.0.0.0', threaded=True, debug=False)
