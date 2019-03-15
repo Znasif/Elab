@@ -1,10 +1,15 @@
+import os, sys
+stderr = sys.stderr
+sys.stderr = open(os.devnull, 'w')
 from keras.models import Sequential, load_model
 from keras.layers import Dense
 from keras.utils import np_utils
+sys.stderr = stderr
 import pandas as pd
 import numpy as np
 import random as rn
 import json
+import time
 
 
 class Data:
@@ -60,6 +65,13 @@ class Data:
         del diagnostics_model
 
     @staticmethod
+    def write_log():
+        time_ = time.asctime( time.localtime(time.time()))
+        time_ = time_.replace(':', '-')
+        with open("Data/"+time_+".txt", "w+") as f:
+            f.write(Report.log)
+
+    @staticmethod
     def prepare_keys():
         Data.read_disease_data()
         Data.read_symptom_pattern()
@@ -78,6 +90,15 @@ class Data:
 
 
 class Report:
+    toLog = True
+    log = ""
+    @staticmethod
+    def print(str_, *argv):
+        if(Report.toLog):
+            Report.log += str(str_) + "\n"
+        else:
+            print(str_)
+
     @staticmethod
     def sort_symptom_ids(symptom_names):
         symptom_ids = [Data.symptom_name_to_id[i] for i in symptom_names]
@@ -107,6 +128,7 @@ class Report:
         r = 0
         false_cnt = 0
         diagnosed_ = []
+        Report.log = ""
 
         for x in predictions:
             mx = -1
@@ -116,8 +138,8 @@ class Report:
                     mx = i
                     idx = j
             diagnosed_.append(Data.disease_id_to_name[idx])
-            print("\n***********************", r, "***********************\n")
-            print("Inferred --> ", Data.disease_id_to_name[idx])
+            Report.print("\n***********************"+ str(r)+ "***********************\n")
+            Report.print("Inferred --> "+ Data.disease_id_to_name[idx])
 
             symptoms_list = []
             given_symptom_ids = []
@@ -126,39 +148,40 @@ class Report:
                 if (x_test[r][j] == 1):
                     symptoms_list.append(Data.symptom_id_to_name[j])
                     given_symptom_ids.append(j)
-            print(symptoms_list)
+            Report.print(str(symptoms_list))
             inferred_symptom_ids = Report.sort_symptom_ids(Data.diseases[Data.disease_id_to_name[idx]][0])
             symptom_properties, aid = Report.find_symptom_overlap(inferred_symptom_ids, given_symptom_ids)
 
             # The percentage of given symptoms that is also present in Inferred Disease
-            print(round(len(aid) / len(inferred_symptom_ids), 2),end=" ")
+            Report.print(str(round(len(aid) / len(inferred_symptom_ids), 2)))
 
             if (y_test is not None and idx != y_test[r]):
-                print("Actual --> ", Data.disease_id_to_name[int(y_test[r])])
+                Report.print("Actual --> "+ Data.disease_id_to_name[int(y_test[r])])
                 actual_symptom_ids = Report.sort_symptom_ids(Data.diseases[Data.disease_id_to_name[int(y_test[r])]][0])
 
                 _, bid = Report.find_symptom_overlap(actual_symptom_ids, given_symptom_ids)
                 cnames, _ = Report.find_symptom_overlap(aid, bid)
 
                 # The percentage of given symptoms that is also present in Actual Disease
-                print(round(len(bid) / len(actual_symptom_ids), 2))
+                Report.print(str(round(len(bid) / len(actual_symptom_ids), 2)))
 
                 # The symptoms that are present in both Inferred and Actual Diseases
-                print("Overlapping Symptoms ", cnames)
+                Report.print("Overlapping Symptoms "+ str(cnames))
                 false_cnt += 1
             else:
                 pass
-                # print(disease_id_to_name[idx])
+                # Report.print(disease_id_to_name[idx])
             r += 1
 
             # The percentage of given symptoms that actually contributed to the inference of the disease
-            print("Actual Contribution Factor -> ", round(len(aid) / (len(given_symptom_ids)+ 0.000001), 2))
+            Report.print("Actual Contribution Factor -> "+ str(round(len(aid) / (len(given_symptom_ids)+ 0.000001), 2)))
 
             # The portion of given symptoms that is also present in Inferred Disease
-            print(symptom_properties)
+            Report.print(symptom_properties)
 
         if (y_test is not None):
-            print("\n********\t", 1 - false_cnt / predictions.shape[0], "\t********")
+            Report.print("\n********\t"+str(1 - false_cnt / predictions.shape[0])+ "\t********")
+        Data.write_log()
         return diagnosed_
         
 
@@ -202,10 +225,10 @@ class Train:
 
         dataset = np.zeros((len(patient_data), len(Data.symptom_pattern)+1))
 
-        for i in patient_data:
+        for k, i in enumerate(patient_data):
             for j in patient_data[i][0]:
-                dataset[int(i)][Data.symptom_name_to_id[j]] = 1
-            dataset[int(i)][-1] = Data.disease_name_to_id[patient_data[i][1]]
+                dataset[k][Data.symptom_name_to_id[j]] = 1
+            dataset[k][-1] = Data.disease_name_to_id[patient_data[i][1]]
         
         # Shuffle dataset and convert to Dataframe
         np.random.shuffle(dataset)
@@ -248,7 +271,7 @@ class Train:
         model.fit(x, y_, epochs=2, batch_size=10)
 
         scores = model.evaluate(x, y_)
-        print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+        Data.print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
         
         Data.save_diagnostics(model)
 
@@ -290,5 +313,10 @@ class Diagnose:
 
 
 if __name__ == "__main__":
-    symptom_list_ = {'33724': [['syncope', 'vertigo'], 'incontinence'], '33725': [['polyuria', 'polydypsia'], 'diabetes'], '33726': [['tremor', 'intoxication'], 'decubitus ulcer']}
-    print(Train.train(symptom_list_))
+    #symptom_list_ = {'33724': [['syncope', 'vertigo'], 'incontinence'], '33725': [['polyuria', 'polydypsia'], 'diabetes'], '33726': [['tremor', 'intoxication'], 'decubitus ulcer']}
+    #print(Train.train(symptom_list_))
+    msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
+    print(Diagnose.diagnose(msg_))
+
+    msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
+    print(Diagnose.diagnose(msg_))
