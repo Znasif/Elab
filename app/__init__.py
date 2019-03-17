@@ -16,13 +16,14 @@ api = Api(app)
 class Diagnose_(Resource):
   def get(self):
     Data.prepare_keys()
+    ls_ = [[i.lower(), Data.symptom_name_to_id[i]] for i in Data.symptom_name_to_id.keys()]
     ret = []
-    for i in Data.symptom_id_to_name.keys():
+    for i in sorted(sorted(ls_)):
       j = {}
-      j["name"] = Data.symptom_id_to_name[i]
-      j["id"] = i
+      k, l = i
+      j["name"] = k
+      j["id"] = l
       ret.append(j)
-
     return jsonify(ret)
   
   def post(self):
@@ -43,10 +44,14 @@ class Train_(Resource):
     """
     j_response contains list of symptoms and a diagnosis
     need to pass json to modules -> Train -> train
-    """
+    
     j_response = request.get_json()
     #j_response = Train.train(j_response)
     return jsonify({"you sent": j_response})
+    """
+    j_response = request.get_json()
+    j_response = Diagnose.diagnose(j_response)
+    return jsonify({"Diagnosed Symptom": j_response})
 
 
 class Report_(Resource):
@@ -63,4 +68,4 @@ api.add_resource(Train_, '/train/')
 api.add_resource(Report_, '/data/')
 
 if __name__ == "__main__":
-  app.run(host='0.0.0.0', threaded=True, debug=False)
+  app.run(host='0.0.0.0', threaded=True, debug=True)

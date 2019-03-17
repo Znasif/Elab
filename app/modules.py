@@ -4,6 +4,7 @@ sys.stderr = open(os.devnull, 'w')
 from keras.models import Sequential, load_model
 from keras.layers import Dense
 from keras.utils import np_utils
+from keras import backend as K
 sys.stderr = stderr
 import pandas as pd
 import numpy as np
@@ -11,6 +12,10 @@ import random as rn
 import json
 import time
 
+def exit_tf():
+    return
+    #K.clear_session()
+    #return
 
 class Data:
     symptom_name_to_id = {}
@@ -19,6 +24,7 @@ class Data:
     disease_id_to_name = {}
     symptom_pattern = {}
     diseases = {}
+    current_model = None
 
     @staticmethod
     def read_patient_data():
@@ -68,7 +74,7 @@ class Data:
     def write_log():
         time_ = time.asctime( time.localtime(time.time()))
         time_ = time_.replace(':', '-')
-        with open("Data/"+time_+".txt", "w+") as f:
+        with open("../Data/"+time_+".txt", "w+") as f:
             f.write(Report.log)
 
     @staticmethod
@@ -182,6 +188,7 @@ class Report:
         if (y_test is not None):
             Report.print("\n********\t"+str(1 - false_cnt / predictions.shape[0])+ "\t********")
         Data.write_log()
+        exit_tf()
         return diagnosed_
         
 
@@ -283,6 +290,7 @@ class Train:
         for j, id in enumerate(new_patient_ids):
             new_patient[id][1] = [new_patient[id][1], res[j]]
 
+        exit_tf()
         return new_patient
 
 class Diagnose:
@@ -294,10 +302,16 @@ class Diagnose:
         :return:
         """
         Data.prepare_keys()
-        model = Data.load_diagnostics()
+        if Data.current_model is None:
+            print("*************FIRST TIME***********************")
+            Data.current_model = Data.load_diagnostics()
+        model = Data.current_model
+        #with open("model"+str(rn.randint(1,9000))+".json", "w+") as json_file:
+        #    json_file.write(model.to_json())
 
-        test_ex = [symptom_list[i] for i in symptom_list.keys()]
-
+        #test_ex = [symptom_list[i] for i in symptom_list.keys()]
+        test_ex = [[Data.symptom_id_to_name[int(i)] for i in symptom_list["symptomid"].split(",")]]
+        
         test_ = np.zeros((len(test_ex), len(Data.symptom_pattern)))
 
         for i in range(len(test_ex)):
@@ -306,17 +320,30 @@ class Diagnose:
             test_[i][-1] = -1
         predictions = model.predict(test_)
         results = Report.result(predictions, test_)
+        '''
         for j, i in enumerate(symptom_list):
             symptom_list[i] = [symptom_list[i], results[j]]
-
-        return symptom_list
-
+        '''
+        
+        exit_tf()
+        return results[0]
+        
+def rand_():
+    s = ""
+    for i in range(rn.randint(1, 5)):
+        s += str(rn.randint(1, 401))+","
+    return s[:-1]
 
 if __name__ == "__main__":
     #symptom_list_ = {'33724': [['syncope', 'vertigo'], 'incontinence'], '33725': [['polyuria', 'polydypsia'], 'diabetes'], '33726': [['tremor', 'intoxication'], 'decubitus ulcer']}
     #print(Train.train(symptom_list_))
-    msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
-    print(Diagnose.diagnose(msg_))
-
-    msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
-    print(Diagnose.diagnose(msg_))
+    #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
+    #print(Diagnose.diagnose(msg_))
+    while True:
+        msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+        print(msg_)
+        a = input()
+        if a== "0":
+            exit(0)
+        #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
+        print(Diagnose.diagnose(msg_))
