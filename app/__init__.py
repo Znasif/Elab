@@ -1,6 +1,6 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
-from flask_oauthlib.provider import OAuth2Provider
+from flask_restful import Resource, Api, reqparse
+import werkzeug
 from flask import jsonify
 import sys, os
 
@@ -11,7 +11,9 @@ import json
 
 app = Flask(__name__)
 api = Api(app)
-
+UPLOAD_FOLDER = '../Data/'
+parser = reqparse.RequestParser()
+parser.add_argument('file',type=werkzeug.datastructures.FileStorage, location='files')
 
 class Diagnose_(Resource):
   def get(self):
@@ -53,6 +55,8 @@ class Train_(Resource):
     j_response = Diagnose.diagnose(j_response)
     return jsonify({"Diagnosed Symptom": j_response})
 
+def prin(s):
+  print(s)
 
 class Report_(Resource):
   def get(self, report_type):
@@ -62,10 +66,23 @@ class Report_(Resource):
     """
     return jsonify({"message": "no post"})
 
+  def post(self):
+    """
+    """
+    data = parser.parse_args()
+    prin(request.headers)
+    if data['file'] == "":
+      return {"Success": "False"}
+    photo = data['file']
+    if photo:
+        filename = 'a.txt'
+        photo.save(os.path.join(UPLOAD_FOLDER,filename))
+    return {"Success": "True"}
+
 
 api.add_resource(Diagnose_, '/diag/')
 api.add_resource(Train_, '/train/')
-api.add_resource(Report_, '/data/')
+api.add_resource(Report_, '/')
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0', threaded=True, debug=True)
