@@ -1,7 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api, reqparse
 import werkzeug
-from flask import jsonify
 import sys, os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -85,4 +84,5 @@ api.add_resource(Train_, '/train/')
 api.add_resource(Report_, '/')
 
 if __name__ == "__main__":
-  app.run(host='0.0.0.0', threaded=True, debug=True)
+  port = int(os.environ.get('PORT', 33507))
+  app.run(host='0.0.0.0', port=port, threaded=True, debug=False)

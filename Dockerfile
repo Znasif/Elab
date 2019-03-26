@@ -18,6 +18,6 @@ WORKDIR /tmp
 ADD . /Elab
 WORKDIR /Elab/app
 
-EXPOSE 5000
+EXPOSE 33507
 
 CMD ["python", "__init__.py"]
