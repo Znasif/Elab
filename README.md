@@ -15,7 +15,7 @@ A Python Flask RESTapi that's ready to run on Heroku.
 
 ## Screenshot
 
-![screenshot](https://i.imgur.com/wf74fxY.png)
+![screenshot](hhttps://imgur.com/IkkvQX0)
 
 ## Deploy
 
