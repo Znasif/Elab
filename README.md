@@ -29,4 +29,4 @@ A Python Flask RESTapi that's ready to run on Heroku.
 
 ## Contributors
 
-* [Yefim](https://twitter.com/yefim)
+* [Znasif](https://linkedin.com/in/nasif-zaman-9683309a/)
