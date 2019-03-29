@@ -1,18 +1,14 @@
 FROM frolvlad/alpine-miniconda3
 
-RUN conda install -y \
+RUN conda install -c conda-forge -y \
     flask \
-    h5py \
+    flask-restful \
+    flask-sqlalchemy \
+    passlib \
     pandas \
     keras \
     tensorflow \
-    tqdm \
   && conda clean --yes --tarballs --packages --source-cache
-
-RUN pip install Flask-RESTful
-RUN pip install Flask-HTTPAuth
-RUN pip install Flask-SQLAlchemy
-RUN pip install passlib
 
 WORKDIR /tmp
 ADD . /Elab

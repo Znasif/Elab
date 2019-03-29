@@ -54,8 +54,6 @@ class Train_(Resource):
     j_response = Diagnose.diagnose(j_response)
     return jsonify({"Diagnosed Symptom": j_response})
 
-def prin(s):
-  print(s)
 
 class Report_(Resource):
   def get(self, report_type):
@@ -69,7 +67,6 @@ class Report_(Resource):
     """
     """
     data = parser.parse_args()
-    prin(request.headers)
     if data['file'] == "":
       return {"Success": "False"}
     photo = data['file']
@@ -85,4 +82,4 @@ api.add_resource(Report_, '/')
 
 if __name__ == "__main__":
   port = int(os.environ.get('PORT', 33507))
-  app.run(host='0.0.0.0', port=port, threaded=True, debug=False)
+  app.run(host='0.0.0.0', port=port, threaded=True, debug=True)
