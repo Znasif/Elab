@@ -24,7 +24,7 @@ class Diagnose_(Resource):
       k, l = i
       j["name"] = k
       j["id"] = l
-      ret[i]=j
+      ret[l]=j
     return jsonify(ret)
   
   def post(self):
