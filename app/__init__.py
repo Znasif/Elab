@@ -18,13 +18,13 @@ class Diagnose_(Resource):
   def get(self):
     Data.prepare_keys()
     ls_ = [[i.lower(), Data.symptom_name_to_id[i]] for i in Data.symptom_name_to_id.keys()]
-    ret = []
+    ret = {}
     for i in sorted(sorted(ls_)):
       j = {}
       k, l = i
       j["name"] = k
       j["id"] = l
-      ret.append(j)
+      ret[i]=j
     return jsonify(ret)
   
   def post(self):
