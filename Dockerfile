@@ -1,14 +1,17 @@
 FROM frolvlad/alpine-miniconda3
 
 RUN conda install -c conda-forge -y \
+    conda-build \
     flask \
+    flask-cors \
     flask-restful \
     flask-sqlalchemy \
     passlib \
     pandas \
     keras \
     tensorflow \
-  && conda clean --yes --tarballs --packages --source-cache
+  && conda clean --yes --tarballs --packages \
+  && conda build purge-all
 
 WORKDIR /tmp
 ADD . /Elab
