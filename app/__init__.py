@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_restful import Resource, Api, reqparse
 import werkzeug
 import sys, os
@@ -10,6 +11,7 @@ import json
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 UPLOAD_FOLDER = '../Data/'
 parser = reqparse.RequestParser()
 parser.add_argument('file',type=werkzeug.datastructures.FileStorage, location='files')
