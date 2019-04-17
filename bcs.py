@@ -2,6 +2,7 @@ import requests
 from tqdm import tqdm
 from bs4 import BeautifulSoup
 import json
+import threading
 
 a = [0 for j in range(7000)]
 d = {}
@@ -16,38 +17,47 @@ for i in range(len(c)):
     b.append(c[i][j+1][1])
     d[c[i][j+1][1]] = c[i][j+1][0]
 
-#for j in b:
-for j in range(21, 22):
+def collect_(j, y):
+  try:
+    url = "https://www.bcsprep.com/questiondetails.php?catid="+str(j)+"&qid="+str(y)
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    sd = str(soup.find_all(class_='lead')[0].get_text())
+    link[y] = {}
+    link[y]["question"] = sd
+    if(len(link[y]["question"])>4):
+      a[y]=1
+    link[y]["options"] = []
+    e = soup.find_all(class_='radio')
+    n = len(e)
+    for x in range(n):
+        # print(soup.find_all(class_='radio')[x].get_text())
+        link[y]["options"].append(str(e[x].get_text()))
+    link[y]["answer"] = []
+    st = soup.find_all('input', id="answeritem")
+    st = str(st)
+    var = st.split("value=")[-1][1:-3]
+    link[y]["answer"].append(var)
+    #print(link[y])
+  except:
+    print("*", end="")
+
+#for j in range(21, 22):
+for j in b:
   link = {}
+  threads = []
   for y in range(7000):
-  #for y in range(63, 64):
-     #if(a[y]==1):
-     #  print("*", end="")
-     #  continue
-     try:
-        url = "https://www.bcsprep.com/questiondetails.php?catid="+str(j)+"&qid="+str(y)
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        sd = str(soup.find_all(class_='lead')[0].get_text())
-        link[y] = {}
-        link[y]["question"] = sd
-        if(len(link[y]["question"])>4):
-          a[y]=1
-        link[y]["options"] = []
-        e = soup.find_all(class_='radio')
-        n = len(e)
-        for x in range(n):
-            # print(soup.find_all(class_='radio')[x].get_text())
-            link[y]["options"].append(str(e[x].get_text()))
-        link[y]["answer"] = []
-        st = soup.find_all('input', id="answeritem")
-        st = str(st)
-        var = st.split("value=")[-1][1:-3]
-        link[y]["answer"].append(var)
-        print(link[y])
-     except:
-        print("*", end="")
-        continue
+#   for y in range(63, 64):
+     if(a[y]==1):
+       print("-", end="")
+       continue
+     t = threading.Thread(target=collect_, args=(j, y,))
+     threads.append(t)
+  for mn in threads:
+      mn.start()
+      print(threading.active_count())
+  for mn in threads:
+      mn.join()
   with open(d[j]+'.json', 'w+') as fp:
-    print(d[j])
+    #print(d[j])
     json.dump(link, fp)

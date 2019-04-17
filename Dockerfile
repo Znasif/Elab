@@ -6,6 +6,8 @@ RUN conda install -c conda-forge -y \
     flask-cors \
     flask-restful \
     flask-sqlalchemy \
+    google-cloud-bigquery \
+    google-cloud-storage \
     passlib \
     pandas \
     keras \
