@@ -12,6 +12,7 @@ import random as rn
 import json
 import time
 
+
 def exit_tf():
     return
     #K.clear_session()

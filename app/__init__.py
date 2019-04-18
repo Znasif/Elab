@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_restful import Resource, Api, reqparse
 import werkzeug
 import sys, os
@@ -10,6 +11,7 @@ import json
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 UPLOAD_FOLDER = '../Data/'
 parser = reqparse.RequestParser()
 parser.add_argument('file',type=werkzeug.datastructures.FileStorage, location='files')
@@ -18,13 +20,13 @@ class Diagnose_(Resource):
   def get(self):
     Data.prepare_keys()
     ls_ = [[i.lower(), Data.symptom_name_to_id[i]] for i in Data.symptom_name_to_id.keys()]
-    ret = []
+    ret = {}
     for i in sorted(sorted(ls_)):
       j = {}
       k, l = i
       j["name"] = k
       j["id"] = l
-      ret.append(j)
+      ret[l]=j
     return jsonify(ret)
   
   def post(self):
