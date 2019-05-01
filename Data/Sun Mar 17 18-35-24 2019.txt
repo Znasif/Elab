@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> obesity morbid
-['sedentary']
-0.08
-Actual Contribution Factor -> 1.0
-[['sedentary', 1]]

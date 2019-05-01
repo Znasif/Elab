@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> failure heart congestive
-['clammy skin']
-0.0
-Actual Contribution Factor -> 0.0
-[]

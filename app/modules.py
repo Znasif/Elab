@@ -11,12 +11,50 @@ import numpy as np
 import random as rn
 import json
 import time
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+from firebase_admin import storage
+import collections
 
 
 def exit_tf():
     return
     #K.clear_session()
     #return
+
+def cloud_setup(folder="Data"):
+    cred = credentials.Certificate('elabCre.json')
+    firebase_admin.initialize_app(cred,  {'storageBucket': 'elab-237906.appspot.com'})
+    Data.bucket = storage.bucket()
+    if folder not in os.listdir():
+        os.mkdir(folder)
+    for i in Data.listfiles:
+        down(os.path.join(folder,i))
+
+def sort_dict(x):
+    sorted_x = sorted(x.items(), key=lambda kv: kv[1])[::-1]
+    tr = {}
+    pr = collections.OrderedDict(sorted_x)
+    for i in pr:
+        tr[i] = pr[i]
+    return tr
+
+def down(filepath):
+    try:
+        blob = Data.bucket.blob(filepath)
+        blob.download_to_filename(filepath)
+        return True
+    except:
+        return False
+
+def up(filepath):
+    try:
+        blob = bucket.blob(filepath)
+        blob.upload_from_filename(filepath)
+        return True
+    except:
+        return False
 
 class Data:
     symptom_name_to_id = {}
@@ -26,57 +64,64 @@ class Data:
     symptom_pattern = {}
     diseases = {}
     current_model = None
+    bucket = None
+    listfiles = ["diagnostics.h5", "diseases.json", "patient.json", "symptom_pattern.json"]
 
     @staticmethod
     def read_patient_data():
-        with open("../Data/patient.json", "r") as f:
+        with open("Data/patient.json", "r") as f:
             a = f.read()
             patient_data = json.loads(a)
         return patient_data
     
     @staticmethod
     def write_patient_data(patient_data):
-        with open("../Data/patient.json", 'w+') as f:
+        with open("Data/patient.json", 'w+') as f:
             json.dump(patient_data, f)
+        return up("Data/patient.json")
 
     @staticmethod
     def read_disease_data():
-        with open("../Data/diseases.json", "r") as f:
+        with open("Data/diseases.json", "r") as f:
             a = f.read()
             Data.diseases = json.loads(a)
 
     @staticmethod
     def write_disease_data(diseases):
-        with open("../Data/diseases.json", 'w+') as f:
+        with open("Data/diseases.json", 'w+') as f:
             json.dump(diseases, f)
+        return up("Data/diseases.json")
 
     @staticmethod
     def read_symptom_pattern():
-        with open("../Data/symptom_pattern.json", "r") as f:
+        with open("Data/symptom_pattern.json", "r") as f:
             a = f.read()
             Data.symptom_pattern = json.loads(a)
         return Data.symptom_pattern
     
     @staticmethod
     def write_symptom_pattern(symptom_pattern):
-        with open("../Data/symptom_pattern.json", 'w+') as f:
+        with open("Data/symptom_pattern.json", 'w+') as f:
             json.dump(symptom_pattern, f)
+        return up("Data/symptom_pattern.json")
 
     @staticmethod
     def load_diagnostics():
-        return load_model('../Data/diagnostics.h5')
+        return load_model('Data/diagnostics.h5')
     
     @staticmethod
     def save_diagnostics(diagnostics_model):
-        diagnostics_model.save('../Data/diagnostics.h5')
+        diagnostics_model.save('Data/diagnostics.h5')
         del diagnostics_model
+        return up("Data/diagnostics.h5")
 
     @staticmethod
     def write_log():
         time_ = time.asctime( time.localtime(time.time()))
         time_ = time_.replace(':', '-')
-        with open("../Data/"+time_+".txt", "w+") as f:
+        with open("Logs/"+time_+".txt", "w+") as f:
             f.write(Report.log)
+        return up("Logs/"+time_+".txt")
 
     @staticmethod
     def prepare_keys():
@@ -140,17 +185,21 @@ class Report:
         for x in predictions:
             mx = -1
             idx = -1
+            
+            all_ = {}
+
             for j, i in enumerate(x):
-                if (i > mx):
-                    mx = i
-                    idx = j
-            diagnosed_.append(Data.disease_id_to_name[idx])
+                all_[Data.disease_id_to_name[j]] = i
+            
+            diagnosed_ = sort_dict(all_)
+            idx = Data.disease_name_to_id[list(diagnosed_.keys())[0]]
             Report.print("\n***********************"+ str(r)+ "***********************\n")
             Report.print("Inferred --> "+ Data.disease_id_to_name[idx])
 
             symptoms_list = []
             given_symptom_ids = []
             rn = x_test[r].shape[0]
+
             for j in range(rn):
                 if (x_test[r][j] == 1):
                     symptoms_list.append(Data.symptom_id_to_name[j])
@@ -352,11 +401,16 @@ if __name__ == "__main__":
     #print(Train.train(symptom_list_))
     #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
     #print(Diagnose.diagnose(msg_))
-    while True:
-        msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-        print(msg_)
-        a = input()
-        if a== "0":
-            exit(0)
-        #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
-        print(Diagnose.diagnose(msg_))
+    # while True:
+    #     msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+    #     print(msg_)
+    #     a = input()
+    #     if a== "0":
+    #         exit(0)
+    #     #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
+    #     print(Diagnose.diagnose(msg_))
+    cloud_setup()
+    Data.prepare_keys()
+    msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+    print(msg_)
+    print(Diagnose.diagnose(msg_))
