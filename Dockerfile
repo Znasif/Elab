@@ -15,10 +15,11 @@ RUN conda install -c conda-forge -y \
   && conda clean --yes --tarballs --packages \
   && conda build purge-all
 
-WORKDIR /tmp
-ADD . /Elab
-WORKDIR /Elab/app
+RUN pip install --no-cache-dir firebase-admin
 
+WORKDIR /tmp
+COPY app/ .
+COPY Logs/ Logs/
 EXPOSE 33507
 
-CMD ["python", "__init__.py"]
+CMD ["python", "modules.py"]
