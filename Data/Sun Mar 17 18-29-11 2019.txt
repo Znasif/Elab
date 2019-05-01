@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> hyperbilirubinemia
-['blackout', 'bleeding of vagina']
-0.0
-Actual Contribution Factor -> 0.0
-[]
