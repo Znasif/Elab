@@ -335,6 +335,18 @@ def rand_():
         s += str(rn.randint(1, 401))+","
     return s[:-1]
 
+def cloud_reply(request):
+    Data.prepare_keys()
+    ls_ = [[i.lower(), Data.symptom_name_to_id[i]] for i in Data.symptom_name_to_id.keys()]
+    ret = {}
+    for i in sorted(sorted(ls_)):
+      j = {}
+      k, l = i
+      j["name"] = k
+      j["id"] = l
+      ret[l]=j
+    return ret
+
 if __name__ == "__main__":
     #symptom_list_ = {'33724': [['syncope', 'vertigo'], 'incontinence'], '33725': [['polyuria', 'polydypsia'], 'diabetes'], '33726': [['tremor', 'intoxication'], 'decubitus ulcer']}
     #print(Train.train(symptom_list_))
