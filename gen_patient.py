@@ -136,10 +136,10 @@ def hist(ns):
         his_data[id]["doctor_ID"] = gen(20)
         his_data[id]["visit_time"] = Date_.add_time()
     
-    with open("history.json", 'w+') as f:
+    with open("extras/history.json", 'w+') as f:
         json.dump(his_data, f)
     
-    with open("patient_ids.json", 'w+') as f:
+    with open("extras/patient_ids.json", 'w+') as f:
         json.dump(pt, f)
 
     return his_data, pt
