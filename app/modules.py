@@ -192,6 +192,9 @@ class Report:
                 all_[Data.disease_id_to_name[j]] = i
             
             diagnosed_ = sort_dict(all_)
+            for i in diagnosed_:
+                print(i, diagnosed_[i])
+            """
             idx = Data.disease_name_to_id[list(diagnosed_.keys())[0]]
             Report.print("\n***********************"+ str(r)+ "***********************\n")
             Report.print("Inferred --> "+ Data.disease_id_to_name[idx])
@@ -238,6 +241,7 @@ class Report:
         if (y_test is not None):
             Report.print("\n********\t"+str(1 - false_cnt / predictions.shape[0])+ "\t********")
         Data.write_log()
+        """
         exit_tf()
         return diagnosed_
         
@@ -376,7 +380,7 @@ class Diagnose:
         '''
         
         exit_tf()
-        return results[0]
+        return results
         
 def rand_():
     s = ""
