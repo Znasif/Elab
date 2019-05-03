@@ -5,21 +5,41 @@ import random
 #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
-url = "https://elab-ai.herokuapp.com"
+#url = "https://elab-ai.herokuapp.com"
+url = "http://localhost:33507"
+
+def rand_(num):
+    s = ""
+    for i in range(random.randint(1, 5)):
+        s += str(random.randint(1, num))+","
+    return s[:-1]
 
 res = requests.get(url+'/diag/')
 if res.ok:
-    print("GET")
+    print("GET Diag")
+    nm = len(res.json())
+else:
+    print(res)
 
-
-def rand_():
-    s = ""
-    for i in range(random.randint(1, 5)):
-        s += str(random.randint(1, 401))+","
-    return s[:-1]
-
-msg_ = {"symptomid": rand_(), "age": "40", "gender": "male"}
+msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
 print(msg_)
+res = requests.post(url+'/diag/', json=msg_)
+
+if res.ok:
+    print("POST", res.json())
+else:
+    print(res)
+
+res = requests.get(url+'/train/')
+if res.ok:
+    pat = res.json()["Data Count"]
+else:
+    print(res)
+
+msg = {}
+for i in range(random.randint(0, 5)):
+    msg[pat+i] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
+
 res = requests.post(url+'/train/', json=msg_)
 
 if res.ok:
@@ -27,13 +47,9 @@ if res.ok:
 else:
     print(res)
 
-res = requests.post(url+'/', files=files)
+# res = requests.post(url+'/', files=files)
 
-if res.ok:
-    print("POST", res.json())
-else:
-    print(res)
-
-res = requests.get(url+'/diag/')
-if res.ok:
-    print("GET")
+# if res.ok:
+#     print("POST", res.json())
+# else:
+#     print(res)

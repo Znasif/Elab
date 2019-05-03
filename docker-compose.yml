@@ -1,0 +1,10 @@
+version: '3'
+services:
+    modules:
+      build:
+        dockerfile: Dockerfile.dev
+        context: .
+      volumes:
+        - ./app:/tmp
+      stdin_open: true
+      tty: true
