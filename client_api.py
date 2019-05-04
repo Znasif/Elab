@@ -6,14 +6,14 @@ import random
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
 #url = "https://elab-ai.herokuapp.com"
-url = "http://localhost:33507"
+url = "http://192.168.0.162:33507"
 
 def rand_(num):
     s = ""
     for i in range(random.randint(1, 5)):
         s += str(random.randint(1, num))+","
     return s[:-1]
-
+    
 res = requests.get(url+'/diag/')
 if res.ok:
     print("GET Diag")
@@ -33,14 +33,16 @@ else:
 res = requests.get(url+'/train/')
 if res.ok:
     pat = res.json()["Data Count"]
+    print(pat)
 else:
     print(res)
 
 msg = {}
-for i in range(random.randint(0, 5)):
-    msg[pat+i] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
+for i in range(random.randint(1, 5)):
+    msg[str(pat+i)] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
 
-res = requests.post(url+'/train/', json=msg_)
+print(msg)
+res = requests.post(url+'/train/', json=msg)
 
 if res.ok:
     print("POST", res.json())
