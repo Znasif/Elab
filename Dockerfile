@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-miniconda3
+FROM frolvlad/alpine-miniconda3:python3.6
 
 RUN conda install -c conda-forge -y \
     conda-build \

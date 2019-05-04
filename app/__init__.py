@@ -27,6 +27,7 @@ class Diagnose_(Resource):
     j_response contains list of symptoms
     need to pass json to modules -> Diagnose -> diagnose
     """
+    exit_tf()
     j_response = request.get_json()
     j_response["diagnosis"] = Diagnose.diagnose(j_response)
     return j_response
@@ -45,7 +46,7 @@ class Train_(Resource):
     #j_response = Train.train(j_response)
     return jsonify({"you sent": j_response})
     """
-    #exit_tf()
+    exit_tf()
     j_response = request.get_json()
     j_response = Train.train({"40000":{"symptomid": "10, 12, 13", "age": "40", "gender": "male", "diagnosis":24}})
     return j_response

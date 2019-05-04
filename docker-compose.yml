@@ -2,9 +2,11 @@ version: '3'
 services:
     modules:
       build:
-        dockerfile: Dockerfile.dev
+        dockerfile: Dockerfile
         context: .
       volumes:
         - ./app:/tmp
+      ports:
+        - "8080:33507"
       stdin_open: true
       tty: true
