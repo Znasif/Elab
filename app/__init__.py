@@ -13,21 +13,20 @@ app = Flask(__name__)
 api = Api(app)
 CORS(app)
 UPLOAD_FOLDER = '../Data/'
+cloud_setup()
 parser = reqparse.RequestParser()
 parser.add_argument('file',type=werkzeug.datastructures.FileStorage, location='files')
 
+def trim_data(dct):
+  thresh_ = .01
+  for i in dct:
+    if dct[i]>thresh_:
+      dct[i] = float(f'{dct[i]:.3}')
+  return dct
+
 class Diagnose_(Resource):
   def get(self):
-    Data.prepare_keys()
-    ls_ = [[i.lower(), Data.symptom_name_to_id[i]] for i in Data.symptom_name_to_id.keys()]
-    ret = {}
-    for i in sorted(sorted(ls_)):
-      j = {}
-      k, l = i
-      j["name"] = k
-      j["id"] = l
-      ret[l]=j
-    return jsonify(ret)
+    return cloud_reply()
   
   def post(self):
     """
@@ -35,13 +34,13 @@ class Diagnose_(Resource):
     need to pass json to modules -> Diagnose -> diagnose
     """
     j_response = request.get_json()
-    j_response = Diagnose.diagnose(j_response)
-    return jsonify({"Diagnosed Symptom": j_response})
+    j_response["diagnosis"] = trim_data(Diagnose.diagnose(j_response))
+    return j_response
 
 
 class Train_(Resource):
   def get(self):
-    return {"message": "no post"}
+    return {"Data Count": len(Data.read_patient_data())}
   
   def post(self):
     """
@@ -53,8 +52,10 @@ class Train_(Resource):
     return jsonify({"you sent": j_response})
     """
     j_response = request.get_json()
-    j_response = Diagnose.diagnose(j_response)
-    return jsonify({"Diagnosed Symptom": j_response})
+    j_response = Train.train(j_response)
+    for i in j_response:
+      j_response[i]["predict"] = trim_data(j_response[i]["predict"])
+    return j_response
 
 
 class Report_(Resource):

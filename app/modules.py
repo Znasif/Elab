@@ -5,7 +5,6 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense
 from keras.utils import np_utils
 from keras import backend as K
-sys.stderr = stderr
 import pandas as pd
 import numpy as np
 import random as rn
@@ -16,31 +15,37 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
 import collections
+sys.stderr = stderr
 
+#####################
+CLOUD_SETUP = True
+#####################
 
 def exit_tf():
     return
     #K.clear_session()
     #return
 
-def cloud_setup(folder="Data"):
+def cloud_setup(folder="Data/"):
+    if CLOUD_SETUP!=True:
+        return False
     cred = credentials.Certificate('elabCre.json')
     firebase_admin.initialize_app(cred,  {'storageBucket': 'elab-237906.appspot.com'})
     Data.bucket = storage.bucket()
-    if folder not in os.listdir():
+    if "Data" not in os.listdir():
         os.mkdir(folder)
     for i in Data.listfiles:
-        down(os.path.join(folder,i))
+        if down(folder+i):
+            continue
+        exit(0)
 
 def sort_dict(x):
     sorted_x = sorted(x.items(), key=lambda kv: kv[1])[::-1]
-    tr = {}
-    pr = collections.OrderedDict(sorted_x)
-    for i in pr:
-        tr[i] = pr[i]
-    return tr
+    return dict(collections.OrderedDict(sorted_x))
 
 def down(filepath):
+    if CLOUD_SETUP!=True:
+        return False
     try:
         blob = Data.bucket.blob(filepath)
         blob.download_to_filename(filepath)
@@ -49,9 +54,12 @@ def down(filepath):
         return False
 
 def up(filepath):
+    if CLOUD_SETUP!=True:
+        return False
     try:
-        blob = bucket.blob(filepath)
+        blob = Data.bucket.blob(filepath)
         blob.upload_from_filename(filepath)
+        print(filepath)
         return True
     except:
         return False
@@ -66,54 +74,55 @@ class Data:
     current_model = None
     bucket = None
     listfiles = ["diagnostics.h5", "diseases.json", "patient.json", "symptom_pattern.json"]
+    folder_ = "Data/"
 
     @staticmethod
     def read_patient_data():
-        with open("Data/patient.json", "r") as f:
+        with open(Data.folder_+"patient.json", "r") as f:
             a = f.read()
             patient_data = json.loads(a)
         return patient_data
     
     @staticmethod
     def write_patient_data(patient_data):
-        with open("Data/patient.json", 'w+') as f:
+        with open(Data.folder_+"patient.json", 'w+') as f:
             json.dump(patient_data, f)
-        return up("Data/patient.json")
+        return up(Data.folder_+"patient.json")
 
     @staticmethod
     def read_disease_data():
-        with open("Data/diseases.json", "r") as f:
+        with open(Data.folder_+"diseases.json", "r") as f:
             a = f.read()
             Data.diseases = json.loads(a)
 
     @staticmethod
     def write_disease_data(diseases):
-        with open("Data/diseases.json", 'w+') as f:
+        with open(Data.folder_+"diseases.json", 'w+') as f:
             json.dump(diseases, f)
-        return up("Data/diseases.json")
+        return up(Data.folder_+"diseases.json")
 
     @staticmethod
     def read_symptom_pattern():
-        with open("Data/symptom_pattern.json", "r") as f:
+        with open(Data.folder_+"symptom_pattern.json", "r") as f:
             a = f.read()
             Data.symptom_pattern = json.loads(a)
         return Data.symptom_pattern
     
     @staticmethod
     def write_symptom_pattern(symptom_pattern):
-        with open("Data/symptom_pattern.json", 'w+') as f:
+        with open(Data.folder_+"symptom_pattern.json", 'w+') as f:
             json.dump(symptom_pattern, f)
-        return up("Data/symptom_pattern.json")
+        return up(Data.folder_+"symptom_pattern.json")
 
     @staticmethod
     def load_diagnostics():
-        return load_model('Data/diagnostics.h5')
+        return load_model(Data.folder_+'diagnostics.h5')
     
     @staticmethod
     def save_diagnostics(diagnostics_model):
-        diagnostics_model.save('Data/diagnostics.h5')
+        diagnostics_model.save(Data.folder_+'diagnostics.h5')
         del diagnostics_model
-        return up("Data/diagnostics.h5")
+        return up(Data.folder_+"diagnostics.h5")
 
     @staticmethod
     def write_log():
@@ -179,7 +188,7 @@ class Report:
     def result(predictions, x_test, y_test=None):
         r = 0
         false_cnt = 0
-        diagnosed_ = []
+        diagnosed_patient = []
         Report.log = ""
 
         for x in predictions:
@@ -192,9 +201,8 @@ class Report:
                 all_[Data.disease_id_to_name[j]] = i
             
             diagnosed_ = sort_dict(all_)
-            for i in diagnosed_:
-                print(i, diagnosed_[i])
-            """
+            diagnosed_patient.append(diagnosed_)
+            
             idx = Data.disease_name_to_id[list(diagnosed_.keys())[0]]
             Report.print("\n***********************"+ str(r)+ "***********************\n")
             Report.print("Inferred --> "+ Data.disease_id_to_name[idx])
@@ -241,9 +249,9 @@ class Report:
         if (y_test is not None):
             Report.print("\n********\t"+str(1 - false_cnt / predictions.shape[0])+ "\t********")
         Data.write_log()
-        """
+        
         exit_tf()
-        return diagnosed_
+        return diagnosed_patient
         
 
 class Train:
@@ -308,9 +316,9 @@ class Train:
 
         # Load and Update patient data
         patient_data = Data.read_patient_data()
-        new_patient_ids = new_patient.keys()
-        for id in new_patient_ids:
-            patient_data[id] = new_patient[id]
+        for id in new_patient:
+            to_ids = [Data.symptom_id_to_name[int(i)] for i in new_patient[id]["symptomid"].split(",")]
+            patient_data[id] = [to_ids, Data.disease_id_to_name[new_patient[id]["diagnosis"]]]
         Data.write_patient_data(patient_data)
         Data.read_symptom_pattern()
 
@@ -332,7 +340,7 @@ class Train:
         model.fit(x, y_, epochs=2, batch_size=10)
 
         scores = model.evaluate(x, y_)
-        Data.print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+        print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
         
         Data.save_diagnostics(model)
 
@@ -341,8 +349,8 @@ class Train:
         y_test = test[:, -1]
         predictions = model.predict(x_test)
         res = Report.result(predictions, x_test, y_test)
-        for j, id in enumerate(new_patient_ids):
-            new_patient[id][1] = [new_patient[id][1], res[j]]
+        for j, id in enumerate(new_patient):
+            new_patient[id]["prediction"] = res[j]
 
         exit_tf()
         return new_patient
@@ -380,7 +388,7 @@ class Diagnose:
         '''
         
         exit_tf()
-        return results
+        return results[0]
         
 def rand_():
     s = ""
@@ -388,7 +396,7 @@ def rand_():
         s += str(rn.randint(1, 401))+","
     return s[:-1]
 
-def cloud_reply(request):
+def cloud_reply():
     Data.prepare_keys()
     ls_ = [[i.lower(), Data.symptom_name_to_id[i]] for i in Data.symptom_name_to_id.keys()]
     ret = {}
@@ -415,6 +423,7 @@ if __name__ == "__main__":
     #     print(Diagnose.diagnose(msg_))
     cloud_setup()
     Data.prepare_keys()
-    msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-    print(msg_)
-    print(Diagnose.diagnose(msg_))
+    # msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+    # Diagnose.diagnose(msg_)
+    symptom_list_ = {len(Data.read_patient_data()):{"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}}
+    print(Train.train(symptom_list_))

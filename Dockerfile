@@ -19,7 +19,6 @@ RUN pip install --no-cache-dir firebase-admin
 
 WORKDIR /tmp
 COPY app/ .
-COPY Logs/ Logs/
 EXPOSE 33507
 
-CMD ["python", "modules.py"]
+CMD ["python", "__init__.py"]

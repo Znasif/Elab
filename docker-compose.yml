@@ -1,9 +1,10 @@
 version: '3'
 services:
-  api:
-    build:
-      dockerfile: Dockerfile.dev
-      context: .
-    volumes:
-      - ./:temp/app
-      - ./Logs:/Logs
+    modules:
+      build:
+        dockerfile: Dockerfile.dev
+        context: .
+      volumes:
+        - ./app:/tmp
+      stdin_open: true
+      tty: true

@@ -22,4 +22,4 @@ COPY app/ .
 COPY Logs/ Logs/
 EXPOSE 33507
 
-CMD ["python", "modules.py"]
+CMD ["sh"]
