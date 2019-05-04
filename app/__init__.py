@@ -48,7 +48,7 @@ class Train_(Resource):
     """
     exit_tf()
     j_response = request.get_json()
-    j_response = Train.train({"40000":{"symptomid": "10, 12, 13", "age": "40", "gender": "male", "diagnosis":24}})
+    j_response = Train.train(j_response)
     return j_response
 
 
@@ -78,5 +78,5 @@ api.add_resource(Train_, '/train/')
 api.add_resource(Report_, '/')
 
 if __name__ == "__main__":
-  port = int(os.environ.get('PORT', 33507))
+  port = int(os.environ.get('PORT', 8080))
   app.run(host='0.0.0.0', port=port, threaded=True, debug=True)
