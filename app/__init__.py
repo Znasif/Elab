@@ -17,12 +17,6 @@ cloud_setup()
 parser = reqparse.RequestParser()
 parser.add_argument('file',type=werkzeug.datastructures.FileStorage, location='files')
 
-def trim_data(dct):
-  thresh_ = .01
-  for i in dct:
-    if dct[i]>thresh_:
-      dct[i] = float(f'{dct[i]:.3}')
-  return dct
 
 class Diagnose_(Resource):
   def get(self):
@@ -34,7 +28,7 @@ class Diagnose_(Resource):
     need to pass json to modules -> Diagnose -> diagnose
     """
     j_response = request.get_json()
-    j_response["diagnosis"] = trim_data(Diagnose.diagnose(j_response))
+    j_response["diagnosis"] = Diagnose.diagnose(j_response)
     return j_response
 
 
@@ -51,10 +45,9 @@ class Train_(Resource):
     #j_response = Train.train(j_response)
     return jsonify({"you sent": j_response})
     """
+    #exit_tf()
     j_response = request.get_json()
-    j_response = Train.train(j_response)
-    for i in j_response:
-      j_response[i]["predict"] = trim_data(j_response[i]["predict"])
+    j_response = Train.train({"40000":{"symptomid": "10, 12, 13", "age": "40", "gender": "male", "diagnosis":24}})
     return j_response
 
 

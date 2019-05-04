@@ -18,13 +18,12 @@ import collections
 sys.stderr = stderr
 
 #####################
-CLOUD_SETUP = True
+CLOUD_SETUP = False
 #####################
 
 def exit_tf():
+    K.clear_session()
     return
-    #K.clear_session()
-    #return
 
 def cloud_setup(folder="Data/"):
     if CLOUD_SETUP!=True:
@@ -190,7 +189,6 @@ class Report:
         false_cnt = 0
         diagnosed_patient = []
         Report.log = ""
-
         for x in predictions:
             mx = -1
             idx = -1
@@ -250,7 +248,6 @@ class Report:
             Report.print("\n********\t"+str(1 - false_cnt / predictions.shape[0])+ "\t********")
         Data.write_log()
         
-        exit_tf()
         return diagnosed_patient
         
 
@@ -350,9 +347,9 @@ class Train:
         predictions = model.predict(x_test)
         res = Report.result(predictions, x_test, y_test)
         for j, id in enumerate(new_patient):
-            new_patient[id]["prediction"] = res[j]
+            new_patient[id]["prediction"] = trim_data(res[j])
 
-        exit_tf()
+        #exit_tf()
         return new_patient
 
 class Diagnose:
@@ -363,6 +360,8 @@ class Diagnose:
         :param symptom_list:
         :return:
         """
+        #exit_tf()
+
         Data.prepare_keys()
         if Data.current_model is None:
             print("*************FIRST TIME***********************")
@@ -387,14 +386,22 @@ class Diagnose:
             symptom_list[i] = [symptom_list[i], results[j]]
         '''
         
-        exit_tf()
-        return results[0]
+        #exit_tf()
+        return trim_data(results[0])
         
 def rand_():
     s = ""
     for i in range(rn.randint(1, 5)):
         s += str(rn.randint(1, 401))+","
     return s[:-1]
+
+def trim_data(dct):
+  thresh_ = .01
+  res = {}
+  for i in dct:
+    if dct[i]>thresh_:
+      res[i] = float(f'{dct[i]:.3}')
+  return res
 
 def cloud_reply():
     Data.prepare_keys()
@@ -423,7 +430,15 @@ if __name__ == "__main__":
     #     print(Diagnose.diagnose(msg_))
     cloud_setup()
     Data.prepare_keys()
-    # msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-    # Diagnose.diagnose(msg_)
-    symptom_list_ = {len(Data.read_patient_data()):{"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}}
+    msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+    print(Diagnose.diagnose(msg_))
+    symptom_list_ = {}
+    ln = len(Data.read_patient_data())
+    for i in range(rn.randint(1, 5)):
+        symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
+    print(symptom_list_)
     print(Train.train(symptom_list_))
+    
+
+
+    
