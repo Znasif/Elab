@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> spasm bronchial
+['rhonchus']
+0.06
+Actual Contribution Factor -> 1.0
+[['rhonchus', 7]]
