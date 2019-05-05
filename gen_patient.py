@@ -30,7 +30,8 @@ year = 2019
 tm_hr = 8
 th_min = 60
 th_sec = 60
-endst = [" AM UTC+6", " PM UTC+6"]
+endst = [" AM", " PM"]
+example_ = "2013/09/05 15:34:00"
 
 carriers_ = ["017", "013", "019", "018", "016", "015"]
 gender = ["male", "female", "others"]
