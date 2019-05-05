@@ -362,10 +362,11 @@ class Diagnose:
         """
         #exit_tf()
 
+        #Data.prepare_keys()
+        #if Data.current_model is None:
         Data.prepare_keys()
-        if Data.current_model is None:
-            print("*************FIRST TIME***********************")
-            Data.current_model = Data.load_diagnostics()
+        #print("*************FIRST TIME***********************")
+        Data.current_model = Data.load_diagnostics()
         model = Data.current_model
         #with open("model"+str(rn.randint(1,9000))+".json", "w+") as json_file:
         #    json_file.write(model.to_json())
@@ -430,15 +431,14 @@ if __name__ == "__main__":
     #     print(Diagnose.diagnose(msg_))
     cloud_setup()
     Data.prepare_keys()
-    msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-    print(Diagnose.diagnose(msg_))
+    for i in range(7):
+        msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+        print(Diagnose.diagnose(msg_))
+    
     symptom_list_ = {}
     ln = len(Data.read_patient_data())
     for i in range(rn.randint(1, 5)):
         symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
     print(symptom_list_)
     print(Train.train(symptom_list_))
-    
 
-
-    

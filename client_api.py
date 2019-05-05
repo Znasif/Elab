@@ -6,7 +6,7 @@ import random
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
 #url = "https://elab-ai.herokuapp.com"
-url = "http://192.168.0.162:8080"
+url = "http://192.168.0.162:8081"
 
 def rand_(num):
     s = ""
@@ -24,15 +24,7 @@ else:
 msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
 
 res = requests.post(url+'/diag/', json=msg_)
-
-if res.ok:
-    print("POST", res.json())
-    # msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
-    # res = requests.post(url+'/diag/', json=msg_)
-else:
-    print(res)
-
-
+cnt = 0
 
 res = requests.get(url+'/train/')
 if res.ok:
@@ -41,19 +33,36 @@ if res.ok:
 else:
     print(res)
 
-
-msg = {}
-for i in range(random.randint(1, 5)):
-    msg[str(pat+i)] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
-
-# print(msg)
-res = requests.post(url+'/train/', json=msg)
-
-if res.ok:
+while res.ok:
+    cnt+=1
     print("POST", res.json())
+    if cnt%2==0:
+        msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
+        res = requests.post(url+'/diag/', json=msg_)
+    else:
+        msg = {}
+        for i in range(random.randint(1, 5)):
+            msg[str(pat+i)] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
+
+        # print(msg)
+        res = requests.post(url+'/train/', json=msg)
 else:
     print(res)
+
+
 """
+# msg = {}
+# for i in range(random.randint(1, 5)):
+#     msg[str(pat+i)] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
+
+# # print(msg)
+# res = requests.post(url+'/train/', json=msg)
+
+# if res.ok:
+#     print("POST", res.json())
+# else:
+#     print(res)
+
 # res = requests.post(url+'/', files=files)
 
 # if res.ok:

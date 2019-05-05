@@ -22,5 +22,5 @@ WORKDIR /tmp
 COPY app/ .
 EXPOSE 8080
 
-CMD exec gunicorn -b 0.0.0.0:8080 --workers 1 --threads 8 __init__:app
-# CMD exec python __init__.py
+CMD exec gunicorn -b 0.0.0.0:8080 --workers 1 --threads 8 app:app
+# CMD exec python app.py
