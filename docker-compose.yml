@@ -7,6 +7,6 @@ services:
       volumes:
         - ./app:/tmp
       ports:
-        - "8080:33507"
+        - "8080:8080"
       stdin_open: true
       tty: true
