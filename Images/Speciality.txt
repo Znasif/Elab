@@ -1,0 +1,24 @@
+Medicine
+Cardiology
+Dentistry
+Dermatology
+Diabetology
+E.N.T
+Endocrinology
+Eye
+Gastroenterology
+Gynecology
+GynecologySurgery
+Hepatology
+Hematology
+Internal Medicine
+Nephrology
+Neurology
+Neuromedicine
+Neurosurgery
+Oncology
+Opthalmology
+Orthopedics
+Pediatrics
+Urology
+Others

@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-miniconda3
+FROM frolvlad/alpine-miniconda3:python3.6
 
 RUN conda install -c conda-forge -y \
     conda-build \
@@ -16,10 +16,11 @@ RUN conda install -c conda-forge -y \
   && conda build purge-all
 
 RUN pip install --no-cache-dir firebase-admin
+RUN pip install Flask gunicorn
 
 WORKDIR /tmp
 COPY app/ .
-COPY Logs/ Logs/
-EXPOSE 33507
+EXPOSE 8080
 
-CMD ["python", "modules.py"]
+CMD exec gunicorn -b 0.0.0.0:8080 --workers 1 --threads 8 __init__:app
+# CMD exec python __init__.py

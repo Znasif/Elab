@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> delirium
+['feeling suicidal', 'nonsmoker', 'syncope & blackout & history of - blackout', 'hirsutism']
+0.08
+Actual Contribution Factor -> 0.25
+[['feeling suicidal', 13]]
