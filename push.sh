@@ -20,4 +20,4 @@
 # pip install --no-cache-dir firebase-admin
 
 gcloud builds submit --tag gcr.io/elab-237906/elab
-gcloud beta run deploy --image gcr.io/elab-237906/elab
+# gcloud beta run deploy --image gcr.io/elab-237906/elab

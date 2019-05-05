@@ -53,7 +53,7 @@ class Train_(Resource):
 
 
 class Report_(Resource):
-  def get(self, report_type):
+  def get(self):
     """
     report_type may be of several kinds
     need to pass report_type to modules -> Data -> generate_report
