@@ -6,7 +6,7 @@ import random
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
 #url = "https://elab-ai.herokuapp.com"
-url = "http://192.168.0.162:8081"
+url = "http://192.168.0.109:8080"
 
 def rand_(num):
     s = ""
@@ -34,7 +34,7 @@ else:
     print(res)
 
 while res.ok:
-    cnt+=1
+    cnt+=2
     print("POST", res.json())
     if cnt%2==0:
         msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
