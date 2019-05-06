@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> failure heart congestive
+['st segment depression']
+0.0
+Actual Contribution Factor -> 0.0
+[]

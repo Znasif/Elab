@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> thrombus
+['chill', 'rapid shallow breathing', 'hypertonicity']
+0.09
+Actual Contribution Factor -> 0.33
+[['hypertonicity', 1]]
