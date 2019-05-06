@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> suicide attempt
-['cough', 'erythema', 'aura']
-0.04
-Actual Contribution Factor -> 0.33
-[['cough', 22]]

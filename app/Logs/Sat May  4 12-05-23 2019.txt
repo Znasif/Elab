@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> melanoma
-['pressure chest', 'pustule', 'bruit']
-0.0
-Actual Contribution Factor -> 0.0
-[]

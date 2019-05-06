@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> pancytopenia
-['unhappy', 'poor dentition', 'pulsus paradoxus']
-0.0
-Actual Contribution Factor -> 0.0
-[]

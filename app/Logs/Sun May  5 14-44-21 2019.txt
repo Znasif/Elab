@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> failure heart congestive
-['difficulty', 'malaise', 'jugular venous distention', 'dyspnea', 'pansystolic murmur']
-0.29
-Actual Contribution Factor -> 0.4
-[['jugular venous distention', 7], ['dyspnea', 22]]

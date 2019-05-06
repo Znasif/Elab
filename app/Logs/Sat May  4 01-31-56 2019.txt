@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> schizophrenia
-['nonsmoker', 'mydriasis', 'snore', 'hypersomnolence', 'hoard']
-0.09
-Actual Contribution Factor -> 0.2
-[['hypersomnolence', 1]]

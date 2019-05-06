@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> septicemia & systemic infection & sepsis (invertebrate)
-['polydypsia', 'mental status changes', 'breech presentation']
-0.07
-Actual Contribution Factor -> 0.33
-[['breech presentation', 3]]

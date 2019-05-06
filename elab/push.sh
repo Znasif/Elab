@@ -1,6 +1,6 @@
-docker build -t znasif/elab .
-heroku container:push web --app elab-ai
-heroku container:release web --app elab-ai
+#docker build -t znasif/elab .
+# heroku container:push web --app elab-ai
+# heroku container:release web --app elab-ai
 
 # conda install -c conda-forge -y \
 #     conda-build \
@@ -19,5 +19,5 @@ heroku container:release web --app elab-ai
 
 # pip install --no-cache-dir firebase-admin
 
-# gcloud builds submit --tag gcr.io/elab-237906/elab
+gcloud builds submit --tag gcr.io/elab-237906/elab
 # gcloud beta run deploy --image gcr.io/elab-237906/elab

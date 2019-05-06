@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> suicide attempt
-['sleeplessness', 'swelling', 'clonus', 'catatonia', 'underweight & underweight']
-0.04
-Actual Contribution Factor -> 0.2
-[['sleeplessness', 10]]

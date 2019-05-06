@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> osteoporosis
-['oliguria', 'general unsteadiness', 'sniffle', 'hepatomegaly', 'urinoma']
-0.07
-Actual Contribution Factor -> 0.2
-[['sniffle', 1]]

@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> depression mental & depressive disorder
-['feeling suicidal', 'nightmare', 'weight gain', 'excruciating pain', 'hypoproteinemia']
-0.1
-Actual Contribution Factor -> 0.4
-[['feeling suicidal', 13], ['nightmare', 6]]

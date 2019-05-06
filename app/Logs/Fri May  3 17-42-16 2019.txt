@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> respiratory failure
-['guaiac positive', 'giddy mood', 'decompensation', 'todd paralysis']
-0.0
-Actual Contribution Factor -> 0.0
-[]

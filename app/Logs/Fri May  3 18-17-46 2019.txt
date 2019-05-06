@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> decubitus ulcer
-['mood depressed', 'cough', 'transsexual']
-0.0
-Actual Contribution Factor -> 0.0
-[]
