@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> thrombus
-['coordination abnormal']
-0.0
-Actual Contribution Factor -> 0.0
-[]

@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> hernia hiatal
-['intoxication', 'unconscious state', 'food intolerance', 'satiety early', 'posterior rhinorrhea']
-0.0
-Actual Contribution Factor -> 0.0
-[]

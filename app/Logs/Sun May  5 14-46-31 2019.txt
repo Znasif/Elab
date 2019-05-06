@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> septicemia & systemic infection & sepsis (invertebrate)
-['myoclonus', 'moan']
-0.0
-Actual Contribution Factor -> 0.0
-[]

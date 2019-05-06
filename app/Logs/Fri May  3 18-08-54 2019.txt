@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> hyperglycemia
-['nervousness', 'estrogen use']
-0.09
-Actual Contribution Factor -> 0.5
-[['estrogen use', 2]]

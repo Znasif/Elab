@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> Alzheimer's disease
-['constipation', 'aura', 'hirsutism', 'previous pregnancies 2']
-0.0
-Actual Contribution Factor -> 0.0
-[]

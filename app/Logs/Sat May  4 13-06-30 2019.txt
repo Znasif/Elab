@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> encephalopathy
-['fatigue', 'urgency of micturition', 'behavior hyperactive', 'incoherent']
-0.0
-Actual Contribution Factor -> 0.0
-[]

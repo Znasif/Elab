@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> neutropenia
-['prostatism', 'stridor', 'paralyse']
-0.0
-Actual Contribution Factor -> 0.0
-[]

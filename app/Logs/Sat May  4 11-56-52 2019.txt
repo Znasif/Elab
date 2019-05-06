@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> Alzheimer's disease
-['st segment elevation', 'mass in breast']
-0.0
-Actual Contribution Factor -> 0.0
-[]

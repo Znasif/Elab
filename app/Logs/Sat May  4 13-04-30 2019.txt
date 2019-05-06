@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> malignant neoplasm of breast & carcinoma breast
-['feeling hopeless', 'heme positive', 'fatigue & tired', 'hypesthesia', 'spasm']
-0.0
-Actual Contribution Factor -> 0.0
-[]

@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> cirrhosis
-['thicken', 'lip smacking']
-0.0
-Actual Contribution Factor -> 0.0
-[]
