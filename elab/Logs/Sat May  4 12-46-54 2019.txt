@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> influenza
+['hypoxemia', 'estrogen use', 'red blotches', 'cystic lesion', 'lip smacking']
+0.05
+Actual Contribution Factor -> 0.2
+[['lip smacking', 2]]

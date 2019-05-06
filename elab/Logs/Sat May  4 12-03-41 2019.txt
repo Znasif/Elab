@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> incontinence
+['vomiting', 'moody', 'fear of falling', 'barking cough']
+0.13
+Actual Contribution Factor -> 0.5
+[['moody', 2], ['fear of falling', 1]]

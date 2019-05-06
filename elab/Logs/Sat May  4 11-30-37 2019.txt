@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> infection
+['malaise', 'hepatosplenomegaly']
+0.08
+Actual Contribution Factor -> 0.5
+[['hepatosplenomegaly', 3]]
