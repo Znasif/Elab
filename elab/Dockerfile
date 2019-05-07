@@ -16,7 +16,7 @@ RUN conda install -c conda-forge -y \
   && conda build purge-all
 
 RUN pip install --no-cache-dir firebase-admin
-# RUN pip install Flask gunicorn
+RUN pip install Flask gunicorn
 
 WORKDIR /tmp
 RUN mkdir elab
@@ -24,5 +24,5 @@ WORKDIR /elab
 COPY . .
 EXPOSE 8080
 
-# CMD exec gunicorn -b 0.0.0.0:8080 --workers 1 --threads 8 app:app
-CMD ["python", "app.py"]
+CMD exec gunicorn -b 0.0.0.0:8080 --workers 1 --threads 8 app:app
+# CMD ["python", "app.py"]

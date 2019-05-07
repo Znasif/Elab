@@ -30,8 +30,6 @@ class Diagnose_(Resource):
     exit_tf()
     j_response = request.get_json()
     j_response["diagnosis"] = Diagnose.diagnose(j_response)
-    j_response["diagnosis"] = Diagnose.diagnose(j_response)
-    j_response["diagnosis"] = Diagnose.diagnose(j_response)
     return j_response
 
 
