@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> kidney disease
+['shortness of breath', 'asthenia', 'fall']
+0.17
+Actual Contribution Factor -> 0.33
+[['shortness of breath', 46]]

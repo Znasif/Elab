@@ -28,7 +28,7 @@ def up(bucket, filepath):
         blob.upload_from_filename(filepath)
         return True
     except:
-        print("FUCKED")
+        print("BAD")
         return False
 
 cloud_setup()
