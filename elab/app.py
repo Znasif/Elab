@@ -16,7 +16,7 @@ UPLOAD_FOLDER = '../Data/'
 cloud_setup()
 parser = reqparse.RequestParser()
 parser.add_argument('file',type=werkzeug.datastructures.FileStorage, location='files')
-
+port_ = 8080
 
 class Diagnose_(Resource):
   def get(self):
@@ -80,5 +80,5 @@ api.add_resource(Train_, '/train/')
 api.add_resource(Report_, '/')
 
 if __name__ == "__main__":
-  port = int(os.environ.get('PORT', 8080))
-  app.run(host='0.0.0.0', port=port, threaded=True, debug=True)
+  port = int(os.environ.get('PORT', port_))
+  app.run(host='0.0.0.0', port=port, threaded=True, debug=False)

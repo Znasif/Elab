@@ -5,8 +5,8 @@ import random
 #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
-#url = "https://elab-ai.herokuapp.com"
-url = "http://192.168.0.161:8080"
+url = "https://elab-ai.herokuapp.com"
+#url = "http://192.168.0.161:8080"
 
 def rand_(num):
     s = ""

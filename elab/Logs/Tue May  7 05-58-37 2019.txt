@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> thrombus
+['labored breathing', 'intoxication', 'green sputum']
+0.0
+Actual Contribution Factor -> 0.0
+[]
