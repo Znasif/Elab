@@ -5,6 +5,7 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense
 from keras.utils import np_utils
 from keras import backend as K
+import tensorflow as tf
 import pandas as pd
 import numpy as np
 import random as rn
@@ -70,7 +71,6 @@ class Data:
     disease_id_to_name = {}
     symptom_pattern = {}
     diseases = {}
-    current_model = None
     bucket = None
     listfiles = ["diagnostics.h5", "diseases.json", "patient.json", "symptom_pattern.json"]
     folder_ = "Data/"
@@ -116,7 +116,7 @@ class Data:
     @staticmethod
     def load_diagnostics():
         return load_model(Data.folder_+'diagnostics.h5')
-    
+
     @staticmethod
     def save_diagnostics(diagnostics_model):
         diagnostics_model.save(Data.folder_+'diagnostics.h5')
@@ -125,11 +125,13 @@ class Data:
 
     @staticmethod
     def write_log():
+        log_folder = "Logs/"
+
         time_ = time.asctime( time.localtime(time.time()))
         time_ = time_.replace(':', '-')
-        with open("Logs/"+time_+".txt", "w+") as f:
+        with open(log_folder+time_+".txt", "w+") as f:
             f.write(Report.log)
-        return up("Logs/"+time_+".txt")
+        return up(log_folder+time_+".txt")
 
     @staticmethod
     def prepare_keys():
@@ -353,42 +355,42 @@ class Train:
         return new_patient
 
 class Diagnose:
-    @staticmethod
-    def diagnose(symptom_list):
+    count = 0
+
+    def __init__(self, symptom_list):
         """
 
         :param symptom_list:
         :return:
         """
-        #exit_tf()
-
-        #Data.prepare_keys()
-        #if Data.current_model is None:
-        Data.prepare_keys()
-        #print("*************FIRST TIME***********************")
-        Data.current_model = Data.load_diagnostics()
-        model = Data.current_model
-        #with open("model"+str(rn.randint(1,9000))+".json", "w+") as json_file:
-        #    json_file.write(model.to_json())
-
-        #test_ex = [symptom_list[i] for i in symptom_list.keys()]
-        test_ex = [[Data.symptom_id_to_name[int(i)] for i in symptom_list["symptomid"].split(",")]]
+        self.session = tf.Session()
+        self.graph = tf.get_default_graph()
+        if Diagnose.count == 0:
+            Data.prepare_keys()
         
+        Diagnose.count += 1
+        #print("*************FIRST TIME***********************")
+
+        test_ex = [[Data.symptom_id_to_name[int(i)] for i in symptom_list["symptomid"].split(",")]]
         test_ = np.zeros((len(test_ex), len(Data.symptom_pattern)))
 
         for i in range(len(test_ex)):
             for j in test_ex[i]:
                 test_[i][Data.symptom_name_to_id[j]] = 1
             test_[i][-1] = -1
-        predictions = model.predict(test_)
-        results = Report.result(predictions, test_)
+
+        # for some reason in a flask app the graph/session needs to be used in the init else it hangs on other threads
+        with self.graph.as_default():
+            with self.session.as_default():
+                self.session.run(tf.global_variables_initializer())
+                self.model = Data.load_diagnostics()
+                predictions = self.model.predict(test_)
+                results = Report.result(predictions, test_)
+                self.diagnosis = trim_data(results[0])
         '''
         for j, i in enumerate(symptom_list):
             symptom_list[i] = [symptom_list[i], results[j]]
         '''
-        
-        #exit_tf()
-        return trim_data(results[0])
         
 def rand_():
     s = ""
@@ -433,12 +435,13 @@ if __name__ == "__main__":
     Data.prepare_keys()
     for i in range(7):
         msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-        print(Diagnose.diagnose(msg_))
+        d = Diagnose(msg_)
+        print(d.diagnosis)
     
-    symptom_list_ = {}
-    ln = len(Data.read_patient_data())
-    for i in range(rn.randint(1, 5)):
-        symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
-    print(symptom_list_)
-    print(Train.train(symptom_list_))
+    # symptom_list_ = {}
+    # ln = len(Data.read_patient_data())
+    # for i in range(rn.randint(1, 5)):
+    #     symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
+    # print(symptom_list_)
+    # print(Train.train(symptom_list_))
 
