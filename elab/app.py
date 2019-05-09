@@ -49,7 +49,8 @@ class Train_(Resource):
     """
     exit_tf()
     j_response = request.get_json()
-    j_response = Train.train(j_response)
+    t = Train(j_response)
+    j_response = t.prediction
     return j_response
 
 

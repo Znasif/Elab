@@ -74,6 +74,8 @@ class Data:
     bucket = None
     listfiles = ["diagnostics.h5", "diseases.json", "patient.json", "symptom_pattern.json"]
     folder_ = "Data/"
+    log_folder = "Logs/"
+    prepared = None
 
     @staticmethod
     def read_patient_data():
@@ -125,13 +127,11 @@ class Data:
 
     @staticmethod
     def write_log():
-        log_folder = "Logs/"
-
         time_ = time.asctime( time.localtime(time.time()))
         time_ = time_.replace(':', '-')
-        with open(log_folder+time_+".txt", "w+") as f:
+        with open(Data.log_folder+time_+".txt", "w+") as f:
             f.write(Report.log)
-        return up(log_folder+time_+".txt")
+        return up(Data.log_folder+time_+".txt")
 
     @staticmethod
     def prepare_keys():
@@ -254,8 +254,7 @@ class Report:
         
 
 class Train:
-    @staticmethod
-    def model_from_scratch():
+    def model_from_scratch(self):
         """
         This generates a model from scratch, ignoring the model available in disk
         :return:
@@ -268,8 +267,7 @@ class Train:
         model.add(Dense(134, activation='softmax'))
         return model
     
-    @staticmethod
-    def split_train_test(data, test_ratio):
+    def split_train_test(self, data, test_ratio):
         """
         Divide data according to test_ratio
         :param data:
@@ -282,8 +280,7 @@ class Train:
         train_indices = shuffled_indices[test_set_size:]
         return data.iloc[train_indices], data.iloc[test_indices]
     
-    @staticmethod
-    def prepare_data(patient_data):
+    def prepare_data(self, patient_data):
         """
         Process data for training
         :param patient_data:
@@ -304,8 +301,7 @@ class Train:
         column_names.append("Disease")
         return pd.DataFrame(data=dataset)
 
-    @staticmethod
-    def train(new_patient, new_model=False):
+    def __init__(self, new_patient, new_model=False):
         """
 
         :param new_patient:
@@ -314,6 +310,7 @@ class Train:
         """
 
         # Load and Update patient data
+        Data.prepare_keys()
         patient_data = Data.read_patient_data()
         for id in new_patient:
             to_ids = [Data.symptom_id_to_name[int(i)] for i in new_patient[id]["symptomid"].split(",")]
@@ -323,15 +320,15 @@ class Train:
 
         # process data for training
         np.random.seed(42)
-        dataset = Train.prepare_data(patient_data)
-        train_set, test_set = Train.split_train_test(dataset, 0.2)
+        dataset = self.prepare_data(patient_data)
+        train_set, test_set = self.split_train_test(dataset, 0.2)
         train = train_set.values
         x = train[:,0:-1]
         y = train[:,-1]
         y_ = np_utils.to_categorical(y)
         
         if(new_model):
-            model = Train.model_from_scratch()
+            model = self.model_from_scratch()
         else:
             model = Data.load_diagnostics()
 
@@ -339,7 +336,7 @@ class Train:
         model.fit(x, y_, epochs=2, batch_size=10)
 
         scores = model.evaluate(x, y_)
-        print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+        print(f"\n{model.metrics_names[1]}: {scores[1]*100:2f}%")
         
         Data.save_diagnostics(model)
 
@@ -351,8 +348,7 @@ class Train:
         for j, id in enumerate(new_patient):
             new_patient[id]["prediction"] = trim_data(res[j])
 
-        #exit_tf()
-        return new_patient
+        self.prediction = new_patient
 
 class Diagnose:
     count = 0
@@ -432,16 +428,19 @@ if __name__ == "__main__":
     #     #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
     #     print(Diagnose.diagnose(msg_))
     cloud_setup()
-    Data.prepare_keys()
-    for i in range(7):
-        msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-        d = Diagnose(msg_)
-        print(d.diagnosis)
+    Data.folder_ = "../Data/"
+    Data.log_folder = "../Logs/"
+    # for i in range(7):
+    #     msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+    #     d = Diagnose(msg_)
+    #     print(d.diagnosis)
     
     # symptom_list_ = {}
     # ln = len(Data.read_patient_data())
     # for i in range(rn.randint(1, 5)):
     #     symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
     # print(symptom_list_)
-    # print(Train.train(symptom_list_))
+    # t = Train(symptom_list_)
+    # print(t.prediction)
+    # Data.save_diagnostics(Data.load_diagnostics())
 
