@@ -103,14 +103,27 @@ def pat(ns):
     for i in range(ns):
         id = gen(20)
         patient[id] = {}
-        patient[id]["ID"] = id
-        patient[id]["Phone"] = Phone_.add_phone()
+        patient[id]["id"] = id
+        patient[id]["phone"] = Phone_.add_phone()
         gn = random.randint(0, 1)
-        patient[id]["Gender"] = gender[gn]
-        patient[id]["MaritalStatus"] = marital_status[random.randint(0, 3)]
-        patient[id]["Age"] = Date_.age()
-        patient[id]["Name"] = Name_.add_name(gn)
+        patient[id]["gender"] = gender[gn]
+        patient[id]["marital_status"] = marital_status[random.randint(0, 3)]
+        patient[id]["age"] = Date_.age()
+        patient[id]["name"] = Name_.add_name(gn)
     return patient
+
+doctor = {}
+
+def doct(ns):
+    for i in range(ns):
+        id = gen(20)
+        doctor[id] = {}
+        doctor[id]["id"] = id
+        doctor[id]["phone"] = Phone_.add_phone()
+        gn = random.randint(0, 1)
+        doctor[id]["gender"] = gender[gn]
+        doctor[id]["name"] = Name_.add_name(gn)
+    return doctor
 
 def hist(ns):
     cnt = 0
@@ -130,6 +143,7 @@ def hist(ns):
 
         id = gen(20)
         his_data[id] = {}
+        his_data[id]["is_followup"] = np.random.choice(["true", "false"])
         his_data[id]["patient_ID"] = pl[cnt-1]
         his_data[id]["medicine_ID"] = list(np.random.choice(ml, random.randint(0, 3)))
         his_data[id]["labtest_ID"] = list(np.random.choice(ll, random.randint(0, 3)))
