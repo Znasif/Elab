@@ -5,6 +5,7 @@ from keras.models import Sequential, load_model
 from keras.layers import Dense
 from keras.utils import np_utils
 from keras import backend as K
+import tensorflow as tf
 import pandas as pd
 import numpy as np
 import random as rn
@@ -70,10 +71,11 @@ class Data:
     disease_id_to_name = {}
     symptom_pattern = {}
     diseases = {}
-    current_model = None
     bucket = None
     listfiles = ["diagnostics.h5", "diseases.json", "patient.json", "symptom_pattern.json"]
     folder_ = "Data/"
+    log_folder = "Logs/"
+    prepared = None
 
     @staticmethod
     def read_patient_data():
@@ -116,7 +118,7 @@ class Data:
     @staticmethod
     def load_diagnostics():
         return load_model(Data.folder_+'diagnostics.h5')
-    
+
     @staticmethod
     def save_diagnostics(diagnostics_model):
         diagnostics_model.save(Data.folder_+'diagnostics.h5')
@@ -127,9 +129,9 @@ class Data:
     def write_log():
         time_ = time.asctime( time.localtime(time.time()))
         time_ = time_.replace(':', '-')
-        with open("Logs/"+time_+".txt", "w+") as f:
+        with open(Data.log_folder+time_+".txt", "w+") as f:
             f.write(Report.log)
-        return up("Logs/"+time_+".txt")
+        return up(Data.log_folder+time_+".txt")
 
     @staticmethod
     def prepare_keys():
@@ -252,8 +254,7 @@ class Report:
         
 
 class Train:
-    @staticmethod
-    def model_from_scratch():
+    def model_from_scratch(self):
         """
         This generates a model from scratch, ignoring the model available in disk
         :return:
@@ -266,8 +267,7 @@ class Train:
         model.add(Dense(134, activation='softmax'))
         return model
     
-    @staticmethod
-    def split_train_test(data, test_ratio):
+    def split_train_test(self, data, test_ratio):
         """
         Divide data according to test_ratio
         :param data:
@@ -280,8 +280,7 @@ class Train:
         train_indices = shuffled_indices[test_set_size:]
         return data.iloc[train_indices], data.iloc[test_indices]
     
-    @staticmethod
-    def prepare_data(patient_data):
+    def prepare_data(self, patient_data):
         """
         Process data for training
         :param patient_data:
@@ -302,8 +301,7 @@ class Train:
         column_names.append("Disease")
         return pd.DataFrame(data=dataset)
 
-    @staticmethod
-    def train(new_patient, new_model=False):
+    def __init__(self, new_patient, new_model=False):
         """
 
         :param new_patient:
@@ -312,6 +310,7 @@ class Train:
         """
 
         # Load and Update patient data
+        Data.prepare_keys()
         patient_data = Data.read_patient_data()
         for id in new_patient:
             to_ids = [Data.symptom_id_to_name[int(i)] for i in new_patient[id]["symptomid"].split(",")]
@@ -321,15 +320,15 @@ class Train:
 
         # process data for training
         np.random.seed(42)
-        dataset = Train.prepare_data(patient_data)
-        train_set, test_set = Train.split_train_test(dataset, 0.2)
+        dataset = self.prepare_data(patient_data)
+        train_set, test_set = self.split_train_test(dataset, 0.2)
         train = train_set.values
         x = train[:,0:-1]
         y = train[:,-1]
         y_ = np_utils.to_categorical(y)
         
         if(new_model):
-            model = Train.model_from_scratch()
+            model = self.model_from_scratch()
         else:
             model = Data.load_diagnostics()
 
@@ -337,7 +336,7 @@ class Train:
         model.fit(x, y_, epochs=2, batch_size=10)
 
         scores = model.evaluate(x, y_)
-        print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+        print(f"\n{model.metrics_names[1]}: {scores[1]*100:2f}%")
         
         Data.save_diagnostics(model)
 
@@ -349,46 +348,45 @@ class Train:
         for j, id in enumerate(new_patient):
             new_patient[id]["prediction"] = trim_data(res[j])
 
-        #exit_tf()
-        return new_patient
+        self.prediction = new_patient
 
 class Diagnose:
-    @staticmethod
-    def diagnose(symptom_list):
+    count = 0
+
+    def __init__(self, symptom_list):
         """
 
         :param symptom_list:
         :return:
         """
-        #exit_tf()
-
-        #Data.prepare_keys()
-        #if Data.current_model is None:
-        Data.prepare_keys()
-        #print("*************FIRST TIME***********************")
-        Data.current_model = Data.load_diagnostics()
-        model = Data.current_model
-        #with open("model"+str(rn.randint(1,9000))+".json", "w+") as json_file:
-        #    json_file.write(model.to_json())
-
-        #test_ex = [symptom_list[i] for i in symptom_list.keys()]
-        test_ex = [[Data.symptom_id_to_name[int(i)] for i in symptom_list["symptomid"].split(",")]]
+        self.session = tf.Session()
+        self.graph = tf.get_default_graph()
+        if Diagnose.count == 0:
+            Data.prepare_keys()
         
+        Diagnose.count += 1
+        #print("*************FIRST TIME***********************")
+
+        test_ex = [[Data.symptom_id_to_name[int(i)] for i in symptom_list["symptomid"].split(",")]]
         test_ = np.zeros((len(test_ex), len(Data.symptom_pattern)))
 
         for i in range(len(test_ex)):
             for j in test_ex[i]:
                 test_[i][Data.symptom_name_to_id[j]] = 1
             test_[i][-1] = -1
-        predictions = model.predict(test_)
-        results = Report.result(predictions, test_)
+
+        # for some reason in a flask app the graph/session needs to be used in the init else it hangs on other threads
+        with self.graph.as_default():
+            with self.session.as_default():
+                self.session.run(tf.global_variables_initializer())
+                self.model = Data.load_diagnostics()
+                predictions = self.model.predict(test_)
+                results = Report.result(predictions, test_)
+                self.diagnosis = trim_data(results[0])
         '''
         for j, i in enumerate(symptom_list):
             symptom_list[i] = [symptom_list[i], results[j]]
         '''
-        
-        #exit_tf()
-        return trim_data(results[0])
         
 def rand_():
     s = ""
@@ -430,15 +428,19 @@ if __name__ == "__main__":
     #     #msg_ = {'33724': ['syncope', 'vertigo'] , '33725': ['polyuria', 'polydypsia'], '33726': ['tremor', 'intoxication']}
     #     print(Diagnose.diagnose(msg_))
     cloud_setup()
-    Data.prepare_keys()
-    for i in range(7):
-        msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
-        print(Diagnose.diagnose(msg_))
+    Data.folder_ = "../Data/"
+    Data.log_folder = "../Logs/"
+    # for i in range(7):
+    #     msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
+    #     d = Diagnose(msg_)
+    #     print(d.diagnosis)
     
-    symptom_list_ = {}
-    ln = len(Data.read_patient_data())
-    for i in range(rn.randint(1, 5)):
-        symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
-    print(symptom_list_)
-    print(Train.train(symptom_list_))
+    # symptom_list_ = {}
+    # ln = len(Data.read_patient_data())
+    # for i in range(rn.randint(1, 5)):
+    #     symptom_list_[str(ln+i)] = {"symptomid": rand_(), "age": "40", "gender": "male", "diagnosis":rn.randint(0, 20)}
+    # print(symptom_list_)
+    # t = Train(symptom_list_)
+    # print(t.prediction)
+    # Data.save_diagnostics(Data.load_diagnostics())
 

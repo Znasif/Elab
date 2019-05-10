@@ -33,3 +33,26 @@ import json
 #         return False
 
 # cloud_setup()
+
+def read_data():
+    with open("Data/m.json", "r") as f:
+        a = f.read()
+        med = json.loads(a)
+    with open("Data/u.json", "r") as f:
+        a = f.read()
+        lab = json.loads(a)
+    return med, lab
+
+def write_data(med, lab):
+    with open("Data/m.json", 'w+') as f:
+        json.dump(med, f)
+    with open("Data/u.json", 'w+') as f:
+        json.dump(lab, f)
+
+
+a, b = read_data()
+c = {}
+for i in a:
+    print(i.lower(), end = " ")
+# for i in b:
+#     print(i.lower(), end=" ")
