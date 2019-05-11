@@ -70,6 +70,7 @@ class Data:
     disease_name_to_id = {}
     disease_id_to_name = {}
     symptom_pattern = {}
+    sglist = {}
     diseases = {}
     bucket = None
     listfiles = ["diagnostics.h5", "diseases.json", "patient.json", "symptom_pattern.json"]
@@ -89,6 +90,12 @@ class Data:
         with open(Data.folder_+"patient.json", 'w+') as f:
             json.dump(patient_data, f)
         return up(Data.folder_+"patient.json")
+    
+    @staticmethod
+    def read_med_data():
+        with open(Data.folder_+"suglist.json", "r") as f:
+            a = f.read()
+            Data.sglist = json.loads(a)
 
     @staticmethod
     def read_disease_data():
@@ -137,6 +144,7 @@ class Data:
     def prepare_keys():
         Data.read_disease_data()
         Data.read_symptom_pattern()
+        Data.read_med_data()
 
         for j, i in enumerate(Data.symptom_pattern):
             Data.symptom_id_to_name[j] = i
@@ -399,7 +407,7 @@ def trim_data(dct):
   res = {}
   for i in dct:
     if dct[i]>thresh_:
-      res[i] = float(f'{dct[i]:.3}')
+      res[i] = {"confidence": float(f'{dct[i]:.3}'), "medicine": list(np.random.choice(Data.sglist["meds"], rn.randint(2, 4))), "lab":list(np.random.choice(Data.sglist["labs"], rn.randint(0, 2)))}
   return res
 
 def cloud_reply():
@@ -430,6 +438,8 @@ if __name__ == "__main__":
     cloud_setup()
     Data.folder_ = "../Data/"
     Data.log_folder = "../Logs/"
+    # Data.prepare_keys()
+    # print(Data.sglist)
     # for i in range(7):
     #     msg_ = {'symptomid': rand_(), "age": "40", "gender": "male"}
     #     d = Diagnose(msg_)

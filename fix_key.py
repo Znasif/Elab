@@ -6,7 +6,7 @@ t = [chr(i) for i in range(ord("A"), ord("Z")+1)]
 nums = [str(i) for i in range(10)]
 
 def all_s(nm):
-    nm_ = nm.split(" ")
+    nm_ = nm.lower().split(" ")
     s_ = ""
     p_ = []
     for i in nm_[::-1]:

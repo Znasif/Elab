@@ -6,8 +6,8 @@ import random
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
 #url = "https://elab-ai.herokuapp.com"
-url = "http://192.168.0.162:8080"
-#url = "https://elab-ezcrut6qwq-uc.a.run.app"
+#url = "http://192.168.0.162:8080"
+url = "https://elab-ezcrut6qwq-uc.a.run.app"
 
 def rand_(num):
     s = ""
