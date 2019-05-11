@@ -1,5 +1,6 @@
 import os
 import json
+import collections
 # import firebase_admin
 # from firebase_admin import credentials
 # from firebase_admin import firestore
@@ -49,10 +50,15 @@ def write_data(med, lab):
     with open("Data/u.json", 'w+') as f:
         json.dump(lab, f)
 
-
-a, b = read_data()
 c = {}
-for i in a:
-    print(i.lower(), end = " ")
-# for i in b:
-#     print(i.lower(), end=" ")
+a, b = read_data()
+
+with open("Data/data_med.json", "r") as f:
+    a = f.read()
+    d = json.loads(a)
+
+def sort_dict(x):
+    sorted_x = sorted(x.items(), key=lambda kv: kv[1])[::-1]
+    return dict(collections.OrderedDict(sorted_x))
+
+for i in 
