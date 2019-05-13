@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> hypercholesterolemia
-['hyperacusis', 'fear of falling', 'pansystolic murmur', 'cystic lesion']
-0.0
-Actual Contribution Factor -> 0.0
-[]

@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> pneumothorax
+['proteinemia', 'soft tissue swelling']
+0.12
+Actual Contribution Factor -> 0.5
+[['soft tissue swelling', 1]]

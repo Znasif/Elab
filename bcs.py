@@ -43,23 +43,24 @@ def collect_(j, y):
         link[y]["answer"].append(var)
         # print(link[y])
     except:
-        print("*", end="")
+        #print("*", end="")
+        pass
 
 
 # for j in range(21, 22):
-for j in b:
+for _, j in tqdm(enumerate(b)):
     link = {}
     threads = []
     for y in range(7000):
         #   for y in range(63, 64):
         if(a[y] == 1):
-            print("-", end="")
+            #print("-", end="")
             continue
         t = threading.Thread(target=collect_, args=(j, y,))
         threads.append(t)
     for mn in threads:
         mn.start()
-        print(threading.active_count())
+        # print(threading.active_count())
     for mn in threads:
         mn.join()
     with open(d[j]+'.json', 'w+') as fp:

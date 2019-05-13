@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> kidney disease
+['dizziness', 'asthenia', 'fall']
+0.0
+Actual Contribution Factor -> 0.0
+[]

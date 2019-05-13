@@ -1,0 +1,12 @@
+version: '3'
+services:
+    modules:
+      build:
+        dockerfile: Dockerfile
+        context: .
+      volumes:
+        - .:/tmp/elab/
+      ports:
+        - "8080:8080"
+      stdin_open: true
+      tty: true

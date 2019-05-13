@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> myocardial infarction
+['st segment elevation', 'haemorrhage', 'noisy respiration', 'dizzy spells']
+0.06
+Actual Contribution Factor -> 0.25
+[['st segment elevation', 1]]

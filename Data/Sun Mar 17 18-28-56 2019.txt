@@ -1,8 +1,0 @@
-
-***********************0***********************
-
-Inferred --> hepatitis
-['mood depressed', 'transaminitis', 'passed stones']
-0.08
-Actual Contribution Factor -> 0.33
-[['transaminitis', 7]]

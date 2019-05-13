@@ -1,0 +1,8 @@
+
+***********************0***********************
+
+Inferred --> failure heart congestive
+['flare']
+0.0
+Actual Contribution Factor -> 0.0
+[]
