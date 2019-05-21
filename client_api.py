@@ -6,8 +6,8 @@ import random
 files = {'file': open('client_api.py', 'rb')}
 auth = ('admin', 'admin12345')
 #url = "https://elab-ai.herokuapp.com"
-url = "http://192.168.0.141:8080"
-# url = "https://elab-ezcrut6qwq-uc.a.run.app"
+# url = "http://192.168.0.141:8080"
+url = "https://elab-ezcrut6qwq-uc.a.run.app"
 
 
 def rand_(num):
@@ -29,6 +29,10 @@ msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
 res = requests.post(url+'/diag/', json=msg_)
 cnt = 0
 
+msg_ = {"disease_name": "abdomen acute"}
+res = requests.post(url+'/select/', json=msg_)
+print(msg_, res.json())
+
 res = requests.get(url+'/train/')
 if res.ok:
     pat = res.json()["Data Count"]
@@ -42,35 +46,35 @@ while res.ok:
     if cnt % 2 == 0:
         msg_ = {"symptomid": rand_(nm-1), "age": "40", "gender": "male"}
         res = requests.post(url+'/diag/', json=msg_)
-    else:
-        msg = {}
-        for i in range(random.randint(1, 5)):
-            msg[str(pat+i)] = {"symptomid": rand_(nm-1), "age": "40",
-                               "gender": "male", "diagnosis": random.randint(0, 20)}
+#     else:
+#         msg = {}
+#         for i in range(random.randint(1, 5)):
+#             msg[str(pat+i)] = {"symptomid": rand_(nm-1), "age": "40",
+#                                "gender": "male", "diagnosis": random.randint(0, 20)}
 
-        # print(msg)
-        res = requests.post(url+'/train/', json=msg)
-else:
-    print(res)
-
-
-"""
-# msg = {}
-# for i in range(random.randint(1, 5)):
-#     msg[str(pat+i)] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
-
-# # print(msg)
-# res = requests.post(url+'/train/', json=msg)
-
-# if res.ok:
-#     print("POST", res.json())
+#         # print(msg)
+#         res = requests.post(url+'/train/', json=msg)
 # else:
 #     print(res)
 
-# res = requests.post(url+'/', files=files)
 
-# if res.ok:
-#     print("POST", res.json())
-# else:
-#     print(res)
-"""
+# """
+# # msg = {}
+# # for i in range(random.randint(1, 5)):
+# #     msg[str(pat+i)] = {"symptomid": rand_(nm), "age": "40", "gender": "male", "diagnosis":random.randint(0, 20)}
+
+# # # print(msg)
+# # res = requests.post(url+'/train/', json=msg)
+
+# # if res.ok:
+# #     print("POST", res.json())
+# # else:
+# #     print(res)
+
+# # res = requests.post(url+'/', files=files)
+
+# # if res.ok:
+# #     print("POST", res.json())
+# # else:
+# #     print(res)
+# """

@@ -33,10 +33,11 @@ class Diagnose_(Resource):
         # exit_tf()
         j_response = request.get_json()
         d = Diagnose(j_response)
-        a = []
-        for i in d.diagnosis:
-            a.append(d.diagnosis[i])
-        return a
+        # a = []
+        # for i in d.diagnosis:
+        #     a.append(d.diagnosis[i])
+        j_response["diagnosis"] = d.diagnosis
+        return j_response
 
 
 class Train_(Resource):
@@ -57,6 +58,16 @@ class Train_(Resource):
         t = Train(j_response)
         j_response = t.prediction
         return j_response
+
+
+class Select_(Resource):
+    def post(self):
+        """
+        """
+        exit_tf()
+        j_response = request.get_json()
+        t = rand_sug(j_response["disease_name"])
+        return t
 
 
 class Report_(Resource):
@@ -83,6 +94,7 @@ class Report_(Resource):
 api.add_resource(Diagnose_, '/diag/')
 api.add_resource(Train_, '/train/')
 api.add_resource(Report_, '/')
+api.add_resource(Select_, '/select/')
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', port_))

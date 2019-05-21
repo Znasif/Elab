@@ -402,6 +402,10 @@ def rand_():
         s += str(rn.randint(1, 401))+","
     return s[:-1]
 
+def rand_sug(dis_nm):
+    Data.prepare_keys()
+    return {dis_nm : {"medicine": list(np.random.choice(Data.sglist["meds"], rn.randint(2, 4))), "lab": list(np.random.choice(Data.sglist["labs"], rn.randint(0, 2)))}}
+
 def trim_data(dct):
   thresh_ = .01
   res = {}
