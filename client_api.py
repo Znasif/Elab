@@ -6,8 +6,8 @@ import random
 files = {'file': open('client_api.py','rb')}
 auth=('admin', 'admin12345')
 #url = "https://elab-ai.herokuapp.com"
-#url = "http://192.168.0.162:8080"
-url = "https://elab-ezcrut6qwq-uc.a.run.app"
+url = "http://192.168.0.162:8080"
+# url = "https://elab-ezcrut6qwq-uc.a.run.app"
 
 def rand_(num):
     s = ""
@@ -22,9 +22,9 @@ if res.ok:
 else:
     print(res)
 
-msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
+# msg_ = {"symptomid": rand_(nm), "age": "40", "gender": "male"}
 
-res = requests.post(url+'/diag/', json=msg_)
+# res = requests.post(url+'/diag/', json=msg_)
 cnt = 0
 
 res = requests.get(url+'/train/')
@@ -35,11 +35,16 @@ else:
     print(res)
 
 while res.ok:
-    cnt+=2
+    cnt+=1
     print("POST", res.json())
     if cnt%2==0:
+        print("**********"*3)
         msg_ = {"symptomid": rand_(nm-1), "age": "40", "gender": "male"}
         res = requests.post(url+'/diag/', json=msg_)
+        nw = res.json()["diagnosis"]
+        for i in nw:
+            print(i, nw[i]["confidence"])
+        print("**********"*3)
     else:
         msg = {}
         for i in range(random.randint(1, 5)):
